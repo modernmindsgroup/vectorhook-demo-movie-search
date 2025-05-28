@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieFinder - Advanced Search Results</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Custom Range Slider */
+        .custom-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #e2e8f0;
+            outline: none;
+        }
+
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .custom-range::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #2563eb;
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:hover {
+            background-color: #f1f5f9;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: relative;
+            height: 18px;
+            width: 18px;
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:hover input ~ .checkmark {
+            border-color: #3b82f6;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .custom-checkbox .checkmark:after {
+            left: 5px;
+            top: 1px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            transition: all 0.2s ease;
+        }
+
+        .filter-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Bar Animation */
+        .search-bar-input { /* Renamed to avoid conflict with Tailwind's .search-bar utility */
+            transition: all 0.3s ease;
+        }
+
+        .search-bar-input:focus {
+            transform: scale(1.01);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Movie Card Hover Effects */
+        .movie-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .movie-poster img {
+            transition: all 0.5s ease;
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        /* Rating Stars */
+        .rating-stars {
+            color: #f59e0b;
+        }
+
+        /* Sort Dropdown Styling */
+        .sort-dropdown {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Custom scrollbar for facet sections */
+        .facet-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .facet-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .facet-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .facet-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            transition: transform 0.3s ease;
+        }
+
+        .drawer-open {
+            transform: translateX(0);
+        }
+
+        .drawer-closed {
+            transform: translateX(-100%);
+        }
+
+        /* Multi-select dropdown (not used in current genre implementation, but good to keep) */
+        .multiselect {
+            position: relative;
+        }
+
+        .multiselect-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .multiselect.active .multiselect-content {
+            display: block;
+        }
+
+        /* Ensure main content doesn't collapse */
+        .main-content-grid {
+            flex-grow: 1;
+            min-width: 70%; /* Adjust as needed to prevent sidebar from shifting */
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <span class="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-2">
+                            <i class="fas fa-film text-white"></i>
+                        </span>
+                        <span class="text-xl font-bold text-gray-900">MovieFinder</span>
+                    </a>
+                </div>
+
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-500 hover:text-gray-900 font-medium">Home</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 font-medium">Discover</a>
+                    <a href="#" class="text-blue-600 font-medium">Search</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 font-medium">Watchlist</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-900 p-1">
+                        <i class="far fa-bell"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-900 p-1">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                    <button class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                        <i class="far fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-r from-blue-600 to-indigo-700 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-white text-2xl md:text-3xl font-bold mb-6 text-center">Find Your Perfect Movie</h1>
+            <div class="relative">
+                <input
+                    type="text"
+                    id="main-search-input"
+                    placeholder="Search by title, actor, director or genre..."
+                    value=""
+                    class="search-bar-input w-full px-6 py-4 pl-12 text-gray-700 bg-white rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-center mt-4 gap-2">
+                <span class="text-blue-100">Popular:</span>
+                <button class="text-white hover:bg-white hover:bg-opacity-20 rounded-full px-3 py-1 text-sm transition-colors" data-search-term="Action">Action</button>
+                <button class="text-white hover:bg-white hover:bg-opacity-20 rounded-full px-3 py-1 text-sm transition-colors" data-search-term="Comedy">Comedy</button>
+                <button class="text-white hover:bg-white hover:bg-opacity-20 rounded-full px-3 py-1 text-sm transition-colors" data-search-term="Drama">Drama</button>
+                <button class="text-white hover:bg-white hover:bg-opacity-20 rounded-full px-3 py-1 text-sm transition-colors" data-search-term="Oscar Winners">Oscar Winners</button>
+                <button class="text-white hover:bg-white hover:bg-opacity-20 rounded-full px-3 py-1 text-sm transition-colors" data-search-term="Recent Releases">Recent Releases</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:hidden mb-4">
+                <button id="filterToggle" class="w-full flex items-center justify-center bg-white shadow rounded-lg p-3 text-gray-700 font-medium">
+                    <i class="fas fa-filter mr-2"></i> Show Filters
+                </button>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <div id="mobileFilters" class="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 md:hidden drawer-closed" style="display: none;">
+                    <div class="absolute inset-y-0 left-0 max-w-xs w-full bg-white shadow-xl mobile-drawer h-full overflow-y-auto">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Filters</h3>
+                            <button id="closeMobileFilters" class="text-gray-400 hover:text-gray-500">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="p-4" id="mobile-filter-content">
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Genre</h3>
+                                <div class="space-y-1" id="genre-filter-mobile">
+                                    </div>
+                                <button class="text-sm text-blue-600 hover:text-blue-800 mt-2 filter-show-more" data-facet-field="genre">Show more</button>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Year</h3>
+                                <div class="px-2">
+                                    <div class="flex justify-between text-xs text-gray-500 mb-2">
+                                        <span id="year-min-label-mobile">1920</span>
+                                        <span id="year-max-label-mobile">2025</span>
+                                    </div>
+                                    <input type="range" id="year-range-mobile" min="1920" max="2025" value="1920" class="custom-range">
+                                    <div class="mt-4 flex justify-between items-center">
+                                        <div class="w-24">
+                                            <label class="block text-xs text-gray-500 mb-1">From</label>
+                                            <input type="number" id="year-from-mobile" value="1920" min="1920" max="2025" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                        </div>
+                                        <span class="text-gray-400">to</span>
+                                        <div class="w-24">
+                                            <label class="block text-xs text-gray-500 mb-1">To</label>
+                                            <input type="number" id="year-to-mobile" value="2025" min="1920" max="2025" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Rating</h3>
+                                <div class="space-y-2" id="rating-filter-mobile">
+                                    </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Runtime</h3>
+                                <div class="space-y-1" id="runtime-filter-mobile">
+                                    </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Available On</h3>
+                                <div class="space-y-1" id="streaming-filter-mobile">
+                                    </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <button id="apply-filters-mobile" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                    Apply Filters
+                                </button>
+                                <button id="reset-filters-mobile" class="w-full text-gray-700 font-medium py-2 px-4 mt-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                    Reset Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden md:block w-full md:w-1/4 lg:w-1/5">
+                    <div class="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-4 border-b border-gray-200">
+                            <h2 class="text-lg font-medium text-gray-900">Filters</h2>
+                            <p class="text-sm text-gray-500" id="results-count-desktop">0 results found</p>
+                        </div>
+
+                        <div class="p-4 max-h-screen-minus-header overflow-y-auto facet-scroll">
+                            <div class="mb-6" id="active-filters-container">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Active Filters</h3>
+                                <div class="flex flex-wrap gap-2" id="active-filter-pills">
+                                    </div>
+                                <button class="text-sm text-blue-600 hover:text-blue-800 mt-2" id="clear-all-filters">
+                                    Clear all filters
+                                </button>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Genre</h3>
+                                <div class="space-y-1" id="genre-filter-desktop">
+                                    </div>
+                                <button class="text-sm text-blue-600 hover:text-blue-800 mt-2 filter-show-more" data-facet-field="genre">Show more</button>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Year</h3>
+                                <div class="px-2">
+                                    <div class="flex justify-between text-xs text-gray-500 mb-2">
+                                        <span id="year-min-label-desktop">1920</span>
+                                        <span id="year-max-label-desktop">2025</span>
+                                    </div>
+                                    <input type="range" id="year-range-desktop" min="1920" max="2025" value="1920" class="custom-range">
+                                    <div class="mt-4 flex justify-between items-center">
+                                        <div class="w-24">
+                                            <label class="block text-xs text-gray-500 mb-1">From</label>
+                                            <input type="number" id="year-from-desktop" value="1920" min="1920" max="2025" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                        </div>
+                                        <span class="text-gray-400">to</span>
+                                        <div class="w-24">
+                                            <label class="block text-xs text-gray-500 mb-1">To</label>
+                                            <input type="number" id="year-to-desktop" value="2025" min="1920" max="2025" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Rating</h3>
+                                <div class="space-y-2" id="rating-filter-desktop">
+                                    </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Runtime</h3>
+                                <div class="space-y-1" id="runtime-filter-desktop">
+                                    </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Available On</h3>
+                                <div class="space-y-1" id="streaming-filter-desktop">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-3/4 lg:w-4/5 main-content-grid">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div class="mb-4 md:mb-0">
+                                <h2 class="text-xl font-bold text-gray-900">Search Results</h2>
+                                <p class="text-sm text-gray-500" id="results-count-mobile">0 movies found</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="hidden flex bg-gray-100 rounded-lg p-1">
+                                    <button class="flex-1 py-1 px-3 rounded-md bg-white shadow text-gray-800 font-medium">
+                                        <i class="fas fa-th-large mr-1"></i> Grid
+                                    </button>
+                                    <button class="flex-1 py-1 px-3 text-gray-600 font-medium">
+                                        <i class="fas fa-list mr-1"></i> List
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <select id="sort-dropdown" class="sort-dropdown bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="rating:DESC">Highest Rated</option>
+                                        <option value="release_year:DESC">Newest First</option>
+                                        <option value="release_year:ASC">Oldest First</option>
+                                        <option value="relevance">Relevance</option>
+                                        <option value="runtime:DESC">Longest Runtime</option>
+                                        <option value="runtime:ASC">Shortest Runtime</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4" id="suggested-tags-container">
+                            <p class="text-sm text-gray-600 mb-2">Suggested tags:</p>
+                            <div class="flex flex-wrap gap-2" id="suggested-tags">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <p class="col-span-full text-center text-gray-500">Loading movies...</p>
+                    </div>
+
+                    <div class="mt-10 flex flex-col items-center">
+                        <button id="load-more-button" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors mb-4 w-full sm:w-auto hidden">
+                            Load More Results
+                        </button>
+
+                        <div class="flex justify-center mt-2 hidden">
+                            <nav class="inline-flex rounded-md shadow-sm -space-x-px overflow-hidden">
+                                <a href="#" class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-600 text-sm font-medium text-white">
+                                    1
+                                </a>
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    2
+                                </a>
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    3
+                                </a>
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                    ...
+                                </span>
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    12
+                                </a>
+                                <a href="#" class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- <section class="py-10 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Related Searches</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="relative group">
+                    <div class="relative h-40 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1579738421867-bb1950e334a1?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Science Fiction Movies" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white font-bold text-lg">Best Sci-Fi of 2024</h3>
+                        <p class="text-gray-300 text-sm">87 movies</p>
+                    </div>
+                    <a href="#" class="absolute inset-0" aria-label="View Best Sci-Fi of 2024"></a>
+                </div>
+
+                <div class="relative group">
+                    <div class="relative h-40 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1547466540-109004071861?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Space Movies" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white font-bold text-lg">Space Exploration</h3>
+                        <p class="text-gray-300 text-sm">124 movies</p>
+                    </div>
+                    <a href="#" class="absolute inset-0" aria-label="View Space Exploration Movies"></a>
+                </div>
+
+                <div class="relative group">
+                    <div class="relative h-40 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1582236111816-658a0b1626f8?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="AI Movies" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white font-bold text-lg">AI & Robotics</h3>
+                        <p class="text-gray-300 text-sm">96 movies</p>
+                    </div>
+                    <a href="#" class="absolute inset-0" aria-label="View AI & Robotics Movies"></a>
+                </div>
+
+                <div class="relative group">
+                    <div class="relative h-40 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1627993077797-227361730419?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dystopian Movies" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 class="text-white font-bold text-lg">Dystopian Futures</h3>
+                        <p class="text-gray-300 text-sm">112 movies</p>
+                    </div>
+                    <a href="#" class="absolute inset-0" aria-label="View Dystopian Future Movies"></a>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <section class="py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900">Recently Viewed</h2>
+                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    View History
+                </button>
+            </div>
+
+            <div class="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4">
+                <div class="flex-shrink-0 w-32">
+                    <div class="rounded-lg overflow-hidden shadow-sm">
+                        <img src="data:image/jpeg;base64,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">
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-900 mt-2 truncate">Arrival</h4>
+                    <p class="text-xs text-gray-500">Today</p>
+                </div>
+
+                <div class="flex-shrink-0 w-32">
+                    <div class="rounded-lg overflow-hidden shadow-sm">
+                        <img alt="Movie Poster" class="w-full h-48 object-cover" src="data:image/jpeg;base64,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">
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-900 mt-2 truncate">Blade Runner 2049</h4>
+                    <p class="text-xs text-gray-500">Yesterday</p>
+                </div>
+
+                <div class="flex-shrink-0 w-32">
+                    <div class="rounded-lg overflow-hidden shadow-sm">
+                        <img src="data:image/jpeg;base64,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" alt="Movie Poster" class="w-full h-48 object-cover">
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-900 mt-2 truncate">The Matrix</h4>
+                    <p class="text-xs text-gray-500">Yesterday</p>
+                </div>
+
+               
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-2">
+                            <i class="fas fa-film text-white"></i>
+                        </span>
+                        <span class="text-xl font-bold text-gray-900">MovieFinder</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Discover your next favorite movie with our comprehensive search and filtering tools.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Browse</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Movies</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">TV Shows</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Genres</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">New Releases</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Top Rated</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Account</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">My Account</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Watchlist</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Watch History</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Settings</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">DMCA</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">&copy; 2025 MovieFinder. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 flex items-center">
+                    <span class="text-gray-500 text-sm mr-4">Available on:</span>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-apple text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-android text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-windows text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_KEY = 'sk_43133c09_4813181f1f39ff42b605b2c9fb2ebb3fd6c1de4d10fd772f07254d5b8ebfb526';
+        const BASE_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/search'; // Updated collection name
+        const COLLECTION_NAME = 'movies-directory'; // Explicit collection name
+
+        // UI Elements
+        const mainSearchInput = document.getElementById('main-search-input');
+        const moviesGrid = document.getElementById('movies-grid');
+        const resultsCountDesktop = document.getElementById('results-count-desktop');
+        const resultsCountMobile = document.getElementById('results-count-mobile');
+        const activeFilterPills = document.getElementById('active-filter-pills');
+        const clearAllFiltersBtn = document.getElementById('clear-all-filters');
+        const sortDropdown = document.getElementById('sort-dropdown');
+        const suggestedTagsContainer = document.getElementById('suggested-tags');
+
+        // Filter sections (desktop & mobile)
+        const genreFilterDesktop = document.getElementById('genre-filter-desktop');
+        const yearRangeDesktop = document.getElementById('year-range-desktop');
+        const yearFromDesktop = document.getElementById('year-from-desktop');
+        const yearToDesktop = document.getElementById('year-to-desktop');
+        const ratingFilterDesktop = document.getElementById('rating-filter-desktop');
+        const runtimeFilterDesktop = document.getElementById('runtime-filter-desktop');
+        const streamingFilterDesktop = document.getElementById('streaming-filter-desktop');
+
+        const genreFilterMobile = document.getElementById('genre-filter-mobile');
+        const yearRangeMobile = document.getElementById('year-range-mobile');
+        const yearFromMobile = document.getElementById('year-from-mobile');
+        const yearToMobile = document.getElementById('year-to-mobile');
+        const ratingFilterMobile = document.getElementById('rating-filter-mobile');
+        const runtimeFilterMobile = document.getElementById('runtime-filter-mobile');
+        const streamingFilterMobile = document.getElementById('streaming-filter-mobile');
+
+        // Mobile drawer elements
+        const filterToggle = document.getElementById('filterToggle');
+        const mobileFilters = document.getElementById('mobileFilters');
+        const closeMobileFilters = document.getElementById('closeMobileFilters');
+        const applyFiltersMobileBtn = document.getElementById('apply-filters-mobile');
+        const resetFiltersMobileBtn = document.getElementById('reset-filters-mobile');
+
+
+        // Global state for filters
+        let currentFilters = {
+            q: '*',
+            filter_by: {}, // e.g., { genre: ['Sci-Fi', 'Action'], release_year: '[1990..2000]', rating: '>=4.0', available_on_streaming: '=true' }
+        };
+        let currentSortBy = sortDropdown.value; // Initialize from default dropdown value
+        let allGenres = new Set(); // To store all unique genres for dynamic filter rendering
+
+        // --- Helper Functions ---
+
+        // Function to create star icons for rating display
+        function createRatingStars(rating) {
+            let starsHtml = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    starsHtml += '<i class="fas fa-star"></i>';
+                } else if (hasHalfStar && i === fullStars) {
+                    starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star"></i>';
+                }
+            }
+            return starsHtml;
+        }
+
+        // Function to create a movie card element
+        function createMovieCard(movie) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'movie-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200';
+            cardDiv.innerHTML = `
+                <div class="movie-poster relative overflow-hidden">
+                    <img src="${movie.poster || 'https://via.placeholder.com/500x750?text=No+Poster'}" alt="${movie.title} Poster" class="w-full h-64 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
+                    <div class="absolute top-3 right-3">
+                        <button class="bg-white bg-opacity-20 backdrop-blur-sm p-2 rounded-full text-white hover:bg-opacity-30 transition-colors">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                    </div>
+                    ${movie.release_year === new Date().getFullYear() ? '<div class="absolute top-3 left-3"><span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-md">NEW</span></div>' : ''}
+                    <div class="absolute bottom-3 left-3 flex items-center">
+                        <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">${movie.rating ? movie.rating.toFixed(1) : 'N/A'}</span>
+                        <div class="ml-2 rating-stars flex items-center text-xs">
+                            ${createRatingStars(movie.rating || 0)}
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-gray-900 font-bold mb-1 text-lg">${movie.title}</h3>
+                    <div class="flex items-center text-sm text-gray-600 mb-2">
+                        <span>${movie.release_year || 'N/A'}</span>
+                        <span class="mx-2">•</span>
+                        <span>${movie.runtime ? movie.runtime + ' min' : 'N/A'}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        ${movie.genre ? movie.genre.map(g => `<span class="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-full">${g}</span>`).join('') : ''}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-lg transition-colors">
+                            <i class="fas fa-play mr-1"></i> Watch
+                        </button>
+                        <div class="flex space-x-1">
+                            ${movie.available_on_streaming ? `
+                                <img src="https://via.placeholder.com/24x24/FF4500/FFFFFF?text=Stream" alt="Streaming Service" class="w-6 h-6 rounded">
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return cardDiv;
+        }
+
+        // Render movie cards into the grid
+        function renderMovies(movies, totalFound) {
+            moviesGrid.innerHTML = ''; // Clear existing movies
+            if (movies && movies.length > 0) {
+                movies.forEach(hit => {
+                    const movie = hit.document;
+                    moviesGrid.appendChild(createMovieCard(movie));
+                });
+            } else {
+                moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No movies found matching your criteria.</p>';
+            }
+            resultsCountDesktop.textContent = `${totalFound} movies found`;
+            resultsCountMobile.textContent = `${totalFound} movies found`;
+        }
+
+        // Render active filter pills
+        function renderActiveFilterPills() {
+            activeFilterPills.innerHTML = '';
+            let hasActiveFilters = false;
+
+            for (const field in currentFilters.filter_by) {
+                const values = currentFilters.filter_by[field];
+                if (Array.isArray(values)) { // For multi-select like genre, or specific values
+                    values.forEach(value => {
+                        hasActiveFilters = true;
+                        const pill = document.createElement('div');
+                        pill.className = 'filter-pill bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
+                        pill.innerHTML = `
+                            ${value}
+                            <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}" data-remove-filter-value="${value}">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        `;
+                        activeFilterPills.appendChild(pill);
+                    });
+                } else if (typeof values === 'string') { // For ranges or single values
+                    hasActiveFilters = true;
+                    const pill = document.createElement('div');
+                    pill.className = 'filter-pill bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
+                    let pillText = '';
+                    switch (field) {
+                        case 'release_year':
+                            const matchYearRange = values.match(/\[(\d+)\.\.(\d+)\]/);
+                            if (matchYearRange) {
+                                pillText = `Year: ${matchYearRange[1]}-${matchYearRange[2]}`;
+                            } else if (values.startsWith('>=')) {
+                                pillText = `Year: ${values.substring(2)}+`;
+                            } else if (values.startsWith('<=')) {
+                                pillText = `Year: ${values.substring(2)}-`;
+                            } else {
+                                pillText = `Year: ${values}`;
+                            }
+                            break;
+                        case 'rating':
+                            const matchRatingRange = values.match(/>=(\d+\.?\d*)/);
+                            if (matchRatingRange) {
+                                pillText = `Rating: ${parseFloat(matchRatingRange[1]).toFixed(1)}+`;
+                            } else {
+                                pillText = `Rating: ${values}`;
+                            }
+                            break;
+                        case 'runtime':
+                            if (values === '<90') pillText = 'Runtime: < 90 min';
+                            else if (values === '[90..120]') pillText = 'Runtime: 90-120 min';
+                            else if (values === '>120') pillText = 'Runtime: > 120 min';
+                            else pillText = `Runtime: ${values}`;
+                            break;
+                        case 'available_on_streaming':
+                            pillText = 'Available: Streaming';
+                            break;
+                        default:
+                            pillText = `${field}: ${values}`;
+                    }
+
+                    pill.innerHTML = `
+                        ${pillText}
+                        <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    `;
+                    activeFilterPills.appendChild(pill);
+                }
+            }
+
+            // Show/hide "Clear all filters" button
+            clearAllFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+        }
+
+        // Render facet filter options
+        function renderFacets(facetCounts, desktopOnly = false) {
+            // Convert facetCounts array to a Map for easier lookup by field_name and value
+            const facetMaps = {};
+            facetCounts.forEach(facet => {
+                facetMaps[facet.field_name] = new Map();
+                facet.counts.forEach(item => {
+                    facetMaps[facet.field_name].set(item.value, item.count);
+                });
+            });
+
+            // Helper to render checkbox filter group
+            const renderCheckboxGroup = (container, fieldName, allValuesSet, currentActiveValues) => {
+                container.innerHTML = '';
+                Array.from(allValuesSet).sort().forEach(value => {
+                    const count = facetMaps[fieldName] ? facetMaps[fieldName].get(value) || 0 : 0;
+                    const div = document.createElement('label');
+                    div.className = 'custom-checkbox flex justify-between';
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" data-facet-field="${fieldName}" value="${value}" ${currentActiveValues && currentActiveValues.includes(value) ? 'checked' : ''}>
+                            <span class="checkmark mr-3"></span>
+                            <span>${value}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${count}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            };
+
+            // Render Genre Filter (Multi-select Checkboxes)
+            const activeGenres = currentFilters.filter_by.genre || [];
+            renderCheckboxGroup(genreFilterDesktop, 'genre', allGenres, activeGenres);
+            if (!desktopOnly) {
+                renderCheckboxGroup(genreFilterMobile, 'genre', allGenres, activeGenres);
+            }
+
+
+            // Render Rating Filter (Static options, counts from API)
+            const renderRatingFilter = (container, currentMinRating) => {
+                container.innerHTML = '';
+                const ratingBuckets = [5, 4, 3]; // Corresponds to >=5, >=4, >=3
+                ratingBuckets.forEach(minRating => {
+                    // This count needs to be derived if the API doesn't return bucketed counts
+                    // For now, we'll assume a dummy count or require explicit facet ranges from API
+                    // For simplicity, we'll just show the star rating as the label
+                    const count = '...'; // API doesn't return exact bucket counts for ranges here.
+                    const isChecked = currentMinRating === minRating;
+                    const div = document.createElement('label');
+                    div.className = 'custom-checkbox flex justify-between';
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" data-facet-field="rating" value="${minRating}" ${isChecked ? 'checked' : ''}>
+                            <span class="checkmark mr-3"></span>
+                            <span class="flex items-center">
+                                ${createRatingStars(minRating)}
+                                <span class="ml-1">& up</span>
+                            </span>
+                        </div>
+                        <span class="text-xs text-gray-500">${count}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            };
+            const currentMinRating = currentFilters.filter_by.rating ? parseFloat(currentFilters.filter_by.rating.replace('>=', '')) : null;
+            renderRatingFilter(ratingFilterDesktop, currentMinRating);
+            if (!desktopOnly) {
+                renderRatingFilter(ratingFilterMobile, currentMinRating);
+            }
+
+            // Render Runtime Filter (Static options, counts from API)
+            const renderRuntimeFilter = (container, currentActiveRuntime) => {
+                container.innerHTML = '';
+                const runtimeBuckets = [
+                    { label: 'Less than 90 min', value: '<90' },
+                    { label: '90-120 min', value: '[90..120]' },
+                    { label: 'Over 120 min', value: '>120' }
+                ];
+                runtimeBuckets.forEach(bucket => {
+                    const count = facetMaps.runtime ? facetMaps.runtime.get(bucket.value) || 0 : '...'; // API might not provide this as-is
+                    const isChecked = currentActiveRuntime && currentActiveRuntime.includes(bucket.value);
+                    const div = document.createElement('label');
+                    div.className = 'custom-checkbox flex justify-between';
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" data-facet-field="runtime" value="${bucket.value}" ${isChecked ? 'checked' : ''}>
+                            <span class="checkmark mr-3"></span>
+                            <span>${bucket.label}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${count}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            };
+            const activeRuntime = currentFilters.filter_by.runtime || [];
+            renderRuntimeFilter(runtimeFilterDesktop, activeRuntime);
+            if (!desktopOnly) {
+                renderRuntimeFilter(runtimeFilterMobile, activeRuntime);
+            }
+
+            // Render Available on Streaming (Boolean filter)
+            const renderStreamingFilter = (container, isAvailable) => {
+                container.innerHTML = '';
+                const div = document.createElement('label');
+                div.className = 'custom-checkbox flex justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="checkbox" data-facet-field="available_on_streaming" value="true" ${isAvailable ? 'checked' : ''}>
+                        <span class="checkmark mr-3"></span>
+                        <span class="flex items-center">
+                            <i class="fas fa-play-circle text-blue-600 mr-2"></i> Available on Streaming
+                        </span>
+                    </div>
+                    <span class="text-xs text-gray-500">...</span>
+                `;
+                container.appendChild(div);
+            };
+            const isStreamingActive = currentFilters.filter_by.available_on_streaming === '=true';
+            renderStreamingFilter(streamingFilterDesktop, isStreamingActive);
+            if (!desktopOnly) {
+                renderStreamingFilter(streamingFilterMobile, isStreamingActive);
+            }
+
+            // Year Range Sliders & Inputs (need to sync initial values and changes)
+            const setupYearRange = (rangeInput, fromInput, toInput, minLabel, maxLabel) => {
+                const currentMin = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\[(\d+)\.\./)[1]) : 1920;
+                const currentMax = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\.\.(\d+)\]/)[1]) : 2025;
+
+                fromInput.value = currentMin;
+                toInput.value = currentMax;
+                minLabel.textContent = fromInput.value;
+                maxLabel.textContent = toInput.value;
+
+                // Sync range slider with text inputs (simplified for now)
+                rangeInput.value = currentMin; // Or midpoint, depending on how you want the single slider to represent range
+
+                fromInput.onchange = toInput.onchange = () => {
+                    const min = parseInt(fromInput.value);
+                    const max = parseInt(toInput.value);
+                    if (min <= max) {
+                        applyFilter('release_year', `[${min}..${max}]`);
+                    }
+                };
+                rangeInput.onchange = () => {
+                    // For a single range slider, you might set both from and to based on its value
+                    // Or ideally, use a dual-thumb slider library
+                    const year = parseInt(rangeInput.value);
+                    yearFromDesktop.value = year; // Example: set 'from' to slider value
+                    yearToDesktop.value = 2025; // Example: keep 'to' at max
+                    yearFromMobile.value = year;
+                    yearToMobile.value = 2025;
+                    applyFilter('release_year', `[${year}..2025]`);
+                };
+            };
+
+            const yearMinLabelDesktop = document.getElementById('year-min-label-desktop');
+            const yearMaxLabelDesktop = document.getElementById('year-max-label-desktop');
+            setupYearRange(yearRangeDesktop, yearFromDesktop, yearToDesktop, yearMinLabelDesktop, yearMaxLabelDesktop);
+
+            const yearMinLabelMobile = document.getElementById('year-min-label-mobile');
+            const yearMaxLabelMobile = document.getElementById('year-max-label-mobile');
+            setupYearRange(yearRangeMobile, yearFromMobile, yearToMobile, yearMinLabelMobile, yearMaxLabelMobile);
+
+
+            // Render Suggested Tags (from the `tags` field in collection, not facet_by)
+            // This is static in the HTML, would need a separate API call for dynamic tags if `tags` is a facet
+            // For now, it remains static as per your HTML
+        }
+
+
+        // --- Core Fetching Logic ---
+
+        async function fetchMovies(query = currentFilters.q, filters = currentFilters.filter_by, sortBy = currentSortBy) {
+            moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 animate-pulse">Loading movies...</p>';
+            resultsCountDesktop.textContent = `Loading...`;
+            resultsCountMobile.textContent = `Loading...`;
+
+            currentFilters.q = query;
+            currentFilters.filter_by = filters;
+            currentSortBy = sortBy;
+
+            const headers = {
+                'X-API-KEY': API_KEY,
+                'Content-Type': 'application/json'
+            };
+
+            let apiUrl = BASE_URL;
+            let requestOptions = {};
+
+            const hasActiveFilters = Object.keys(filters).length > 0;
+            const hasSearchQuery = (query !== '*' && query !== '');
+
+            // All faceted fields from your collection schema
+            const allFacetFields = "release_year,genre,rating,runtime,available_on_streaming";
+
+            if (hasActiveFilters || hasSearchQuery) {
+                // Use POST for specific queries or filters
+                apiUrl = BASE_URL.split('?')[0];
+                const payload = {
+                    q: hasSearchQuery ? query : '*',
+                    query_by: "title,description,director,cast,genre,tags", // Search across multiple fields
+                    sort_by: sortBy,
+                    facet_by: allFacetFields, // Request facets for all declared facet fields
+                    per_page: 12 // Number of results per page
+                };
+
+                // Construct filter_by string
+                if (hasActiveFilters) {
+                    const filterParts = [];
+                    for (const field in filters) {
+                        const value = filters[field];
+                        if (Array.isArray(value)) { // For string[] types like genre
+                            filterParts.push(`${field}:=[${value.map(v => `'${v}'`).join(',')}]`);
+                        } else if (field === 'available_on_streaming') { // Boolean
+                            filterParts.push(`${field}:${value}`); // Expects '=true' or '=false' from logic
+                        }
+                        else { // For ranges (string type from number inputs/sliders)
+                            filterParts.push(`${field}:${value}`);
+                        }
+                    }
+                    payload.filter_by = filterParts.join(' && ');
+                }
+
+                requestOptions = {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                };
+            } else {
+                // Initial load: GET all movies, get all facets
+                apiUrl += `?q=${encodeURIComponent(query)}&facet_by=${allFacetFields}&sort_by=${encodeURIComponent(sortBy)}`;
+                requestOptions = {
+                    method: 'GET',
+                    headers: headers
+                };
+            }
+
+            try {
+                const response = await fetch(apiUrl, requestOptions);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Populate all possible facet values on the very first unrestricted load
+                    if (!hasActiveFilters && !hasSearchQuery) {
+                        data.data.facet_counts.forEach(facet => {
+                            if (facet.field_name === 'genre') {
+                                facet.counts.forEach(item => allGenres.add(item.value));
+                            }
+                            // Add other "all possible values" if needed, e.g., director names
+                        });
+                    }
+                    renderMovies(data.data.hits, data.data.found);
+                    renderFacets(data.data.facet_counts);
+                    renderActiveFilterPills();
+                } else {
+                    moviesGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Error: ${data.message || 'Failed to fetch movies'}</p>`;
+                    resultsCountDesktop.textContent = `Error loading results.`;
+                    resultsCountMobile.textContent = `Error loading results.`;
+                    console.error('API Error:', data);
+                }
+            } catch (error) {
+                moviesGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Network Error: Could not connect to the API.</p>';
+                resultsCountDesktop.textContent = `Network error.`;
+                resultsCountMobile.textContent = `Network error.`;
+                console.error('Fetch error:', error);
+            }
+        }
+
+
+        // --- Filter Application Logic ---
+
+        // Unified function to apply a filter and trigger search
+        function applyFilter(field, value) {
+            const newFilters = { ...currentFilters.filter_by };
+
+            if (field === 'genre' || field === 'runtime') { // Multi-select checkboxes
+                if (!newFilters[field]) {
+                    newFilters[field] = [];
+                }
+                if (newFilters[field].includes(value)) {
+                    newFilters[field] = newFilters[field].filter(v => v !== value);
+                } else {
+                    newFilters[field].push(value);
+                }
+                if (newFilters[field].length === 0) {
+                    delete newFilters[field];
+                }
+            } else if (field === 'rating') { // Special handling for rating tiers
+                // Only one rating tier can be selected at a time
+                if (newFilters.rating === value) {
+                    delete newFilters.rating; // Deselect if already active
+                } else {
+                    newFilters.rating = value;
+                }
+            } else if (field === 'available_on_streaming') { // Boolean checkbox
+                 if (newFilters.available_on_streaming === value) {
+                    delete newFilters.available_on_streaming;
+                 } else {
+                    newFilters.available_on_streaming = value;
+                 }
+            }
+            else if (field === 'release_year') { // Year range
+                newFilters.release_year = value; // Value will be like '[1990..2000]'
+            }
+            // Add other filter types as needed
+
+            fetchMovies(currentFilters.q, newFilters, currentSortBy);
+        }
+
+        // Function to remove a filter
+        function removeFilter(field, valueToRemove = null) {
+            const newFilters = { ...currentFilters.filter_by };
+
+            if (field === 'genre' || field === 'runtime') {
+                if (newFilters[field] && Array.isArray(newFilters[field]) && valueToRemove) {
+                    newFilters[field] = newFilters[field].filter(v => v !== valueToRemove);
+                    if (newFilters[field].length === 0) {
+                        delete newFilters[field];
+                    }
+                }
+            } else { // For single-value filters like year, rating, streaming status
+                delete newFilters[field];
+            }
+            fetchMovies(currentFilters.q, newFilters, currentSortBy);
+        }
+
+        // --- Event Listeners ---
+
+        // Main Search Input
+        let searchTimeout;
+        mainSearchInput.addEventListener('keyup', (event) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = event.target.value.trim();
+                fetchMovies(query === '' ? '*' : query);
+            }, 500); // Debounce search
+        });
+
+        // Popular Search buttons
+        document.querySelectorAll('[data-search-term]').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const searchTerm = event.target.dataset.searchTerm;
+                mainSearchInput.value = searchTerm;
+                fetchMovies(searchTerm);
+            });
+        });
+
+        // Sort Dropdown
+        sortDropdown.addEventListener('change', (event) => {
+            fetchMovies(currentFilters.q, currentFilters.filter_by, event.target.value);
+        });
+
+        // Clear all filters button
+        clearAllFiltersBtn.addEventListener('click', () => {
+            currentFilters.filter_by = {};
+            // Reset year range inputs and sliders visually
+            const currentYear = new Date().getFullYear();
+            yearFromDesktop.value = 1920;
+            yearToDesktop.value = currentYear;
+            yearRangeDesktop.value = 1920; // Or reset to a sensible default
+            yearFromMobile.value = 1920;
+            yearToMobile.value = currentYear;
+            yearRangeMobile.value = 1920;
+
+
+            fetchMovies(currentFilters.q, {});
+        });
+
+        // Event delegation for all sidebar filters (desktop & mobile)
+        document.addEventListener('change', (event) => {
+            const target = event.target;
+            if (target.type === 'checkbox' && target.dataset.facetField) {
+                const field = target.dataset.facetField;
+                const value = target.value;
+
+                // Special handling for rating checkboxes (treat as radio-like)
+                if (field === 'rating') {
+                    const currentRating = currentFilters.filter_by.rating;
+                    const newRatingValue = target.checked ? `>=${parseFloat(value).toFixed(1)}` : null;
+
+                    // If a rating is already selected, and user clicks it again (to deselect)
+                    // or clicks a different rating, clear existing rating filter
+                    if (currentRating === newRatingValue) {
+                         delete currentFilters.filter_by.rating;
+                    } else {
+                         currentFilters.filter_by.rating = newRatingValue;
+                    }
+                    // Re-render all rating checkboxes to ensure only one is checked
+                    renderFacets(currentFilters.facet_counts || []); // Use last received facet counts
+                    fetchMovies(currentFilters.q, currentFilters.filter_by, currentSortBy);
+                } else if (field === 'available_on_streaming') {
+                    applyFilter(field, target.checked ? '=true' : '=false'); // Boolean facet needs =true/=false
+                }
+                else { // For genre and runtime (multi-select)
+                    applyFilter(field, value);
+                }
+            }
+        });
+
+        // Event listener for removing filter pills
+        activeFilterPills.addEventListener('click', (event) => {
+            const target = event.target.closest('button[data-remove-filter-field]');
+            if (target) {
+                const field = target.dataset.removeFilterField;
+                const value = target.dataset.removeFilterValue; // Will be null for single-value filters
+                removeFilter(field, value);
+            }
+        });
+
+
+        // --- Mobile Filter Drawer Logic ---
+
+        // Toggle visibility and animation classes
+        filterToggle.addEventListener('click', () => {
+            mobileFilters.style.display = 'block';
+            setTimeout(() => {
+                mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-closed');
+                mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-open');
+            }, 10);
+        });
+
+        closeMobileFilters.addEventListener('click', () => {
+            mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-open');
+            mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-closed');
+            setTimeout(() => {
+                mobileFilters.style.display = 'none';
+            }, 300); // Match CSS transition duration
+        });
+
+        // Mobile Apply/Reset Buttons (Apply current filters on mobile drawer close)
+        applyFiltersMobileBtn.addEventListener('click', () => {
+             // For simplicity, directly re-fetch with current global filters state
+             // In a more complex app, mobile filters might have local state that syncs on apply
+             fetchMovies(currentFilters.q, currentFilters.filter_by, currentSortBy);
+             closeMobileFilters.click(); // Close drawer after applying
+        });
+
+        resetFiltersMobileBtn.addEventListener('click', () => {
+            currentFilters.filter_by = {}; // Reset all filters
+            mainSearchInput.value = ''; // Clear search
+            fetchMovies('*', {}); // Re-fetch all
+            closeMobileFilters.click(); // Close drawer
+        });
+
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchMovies();
+        });
+    </script>
+</body>
+</html>
