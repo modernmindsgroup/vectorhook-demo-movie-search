@@ -173,6 +173,246 @@
             background: #94a3b8;
         }
 
+/* AI Assistant Widget Styling */
+/* AI Chatbot Widget Styling */
+#ai-assistant-widget {
+    bottom: 2rem;
+    right: 2rem;
+    width: 20rem; /* Fixed width based on image (approx. 320px) */
+    height: 28rem; /* Fixed height based on image (approx. 450px) */
+    
+    position: fixed;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out; /* Smooth collapse/expand */
+    transform-origin: bottom right; /* Collapse from bottom-right */
+
+    /* Overall container design */
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05); /* Deeper shadow */
+    border-radius: 0.75rem; /* rounded-xl for top and sides */
+    border-bottom-left-radius: 0.75rem; /* Rounded bottom-left as per image */
+    overflow: hidden; /* Crucial for hiding overflowing content and rounded corners */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Collapsed state for the widget */
+#ai-assistant-widget.collapsed {
+    width: 0;
+    height: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none; /* Disable interactions when collapsed */
+    transform: scale(0.1); /* Shrink to a small point */
+}
+
+/* Header specific styling */
+#ai-assistant-header {
+    cursor: grab; /* Indicates it's draggable */
+    user-select: none; /* Prevent text selection during drag */
+    flex-shrink: 0; /* Prevent header from shrinking */
+    position: relative; /* For the curve pseudo-element */
+    z-index: 2; /* Ensure header content is above the curve and conversation */
+    padding-bottom: 30px; /* Increased padding to make room for the curve visual */
+    border-top-left-radius: 0.75rem; /* Match parent rounded-t-xl */
+    border-top-right-radius: 0.75rem; /* Match parent rounded-t-xl */
+}
+
+/* The "curvy thingy" for the header bottom */
+.header-bottom-curve {
+    position: absolute;
+    bottom: -1px; /* Overlap slightly with the next section */
+    left: 0;
+    right: 0;
+    height: 30px; /* Controls the height/depth of the curve */
+    background-color: #f3f4f6; /* Matching Tailwind gray-100 (conversation background) */
+    border-top-left-radius: 50% 15px; /* Creates the curve */
+    border-top-right-radius: 50% 15px; /* Creates the curve */
+    z-index: 1; /* Place behind header content but above conversation */
+}
+
+/* Chatbot Conversation Area */
+#ai-chat-conversation {
+    flex-grow: 1; /* Allow conversation area to fill remaining space */
+    padding: 1rem;
+    background-color: #f3f4f6; /* Tailwind gray-100 */
+}
+
+/* Custom Scrollbar for Chatbot Conversation Area */
+#ai-chat-conversation.custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+#ai-chat-conversation.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f3f4f6; /* Color of the track (gray-100) */
+    border-radius: 4px;
+}
+
+#ai-chat-conversation.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* Color of the thumb (gray-300) */
+    border-radius: 3px;
+}
+
+#ai-chat-conversation.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; /* Color of the thumb on hover (gray-400) */
+}
+
+
+/* Message bubble base styling */
+.ai-message-bubble, .user-message-bubble {
+    padding: 0.75rem 1rem; /* Adjusted padding */
+    margin-bottom: 0.75rem; /* Space between bubbles */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Subtle shadow */
+    line-height: 1.4; /* Improve readability */
+}
+
+/* AI message bubbles (left-aligned) */
+.ai-message-bubble {
+    background-color: #ffffff; /* White background for AI (as per image) */
+    color: #1e293b; /* Dark text */
+    border-radius: 0.75rem; /* General rounding */
+    border-top-left-radius: 0.25rem; /* Flat top-left corner as per image */
+    align-self: flex-start;
+    margin-right: auto; /* Pushes to left */
+}
+
+/* User message bubbles (right-aligned) */
+.user-message-bubble {
+    background-color: #dbeafe; /* Light blue background for user (as per image) */
+    color: #1e293b; /* Dark text */
+    border-radius: 0.75rem; /* General rounding */
+    border-top-right-radius: 0.25rem; /* Flat top-right corner as per image */
+    align-self: flex-end;
+    margin-left: auto; /* Pushes to right */
+}
+
+/* Typing indicator style */
+.ai-message-bubble.animate-pulse {
+    border: 1px solid #3b82f6; /* Blue border while pulsing */
+}
+
+
+/* Quick replies container and buttons */
+#quick-replies-container {
+    padding-top: 0.5rem; /* Space above quick replies */
+    padding-bottom: 0.5rem; /* Space below quick replies */
+    justify-content: flex-end; /* Align quick replies to the right, as per image */
+}
+.quick-reply-button {
+    background-color: #e0f2fe; /* Light blue */
+    color: #2563eb; /* Darker blue text */
+    border: 1px solid #bfdbfe; /* blue-200 */
+    border-radius: 9999px; /* Fully rounded pills */
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    transition: all 0.2s ease;
+}
+.quick-reply-button:hover {
+    background-color: #bfdbfe;
+    border-color: #60a5fa;
+}
+
+
+/* Chatbot Input Area */
+#ai-chat-input-area {
+    flex-shrink: 0; /* Prevent input area from shrinking */
+    padding: 0.75rem 1rem; /* Adjusted padding */
+    background-color: #ffffff; /* White background */
+    border-top: 1px solid #e2e8f0; /* Light gray border top */
+}
+#ai-user-input {
+    height: 2.5rem; /* Fixed height for input */
+    border-radius: 9999px; /* Fully rounded */
+    padding: 0.5rem 1rem; /* Standard padding inside input */
+    font-size: 0.95rem; /* Slightly larger text */
+    background-color: #f8fafc; /* Lighter background */
+    border-color: #e2e8f0; /* Light border */
+    flex-grow: 1;
+    color: #1e293b; /* Dark text */
+}
+#ai-user-input:focus {
+    border-color: #3b82f6; /* Blue-500 on focus */
+    box-shadow: 0 0 0 1px #3b82f6; /* Ring effect */
+}
+
+/* Input icons styling */
+#ai-chat-input-area button {
+    font-size: 1.125rem; /* text-lg */
+    width: 2.5rem; /* Make icon buttons square */
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Make them round */
+}
+#ai-chat-input-area button:first-child { /* Emoji icon */
+    margin-right: 0.5rem;
+}
+#ai-chat-input-area button:nth-child(2) { /* Attachment icon */
+    margin-right: 0.5rem;
+}
+
+
+/* Send button styling (large, circular, dark blue) */
+#ai-send-button {
+    width: 3rem; /* Larger than input icons */
+    height: 3rem;
+    border-radius: 50%; /* Circular */
+    background-color: #2563eb; /* Dark blue-600 */
+    color: white;
+    font-size: 1.5rem; /* Larger icon */
+    margin-left: 0.75rem; /* Spacing from input */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+#ai-send-button:hover {
+    background-color: #1d4ed8; /* Darker blue on hover */
+}
+
+/* Hide internal elements when collapsed */
+#ai-assistant-widget.collapsed #ai-assistant-header > div:last-child, /* Hide header buttons */
+#ai-assistant-widget.collapsed #ai-chat-conversation,
+#ai-assistant-widget.collapsed #quick-replies-container,
+#ai-assistant-widget.collapsed #ai-chat-input-area {
+    display: none;
+}
+/* Re-adjust header padding/height when collapsed to show just the name */
+#ai-assistant-widget.collapsed #ai-assistant-header {
+    height: auto;
+    padding-bottom: 1rem;
+}
+#ai-assistant-widget.collapsed .header-bottom-curve {
+    display: none; /* Hide the curve when collapsed */
+}
+
+
+/* Floating Chat Bubble (hidden when widget is open) */
+#ai-chat-bubble {
+    width: 4rem; /* w-16 */
+    height: 4rem; /* h-16 */
+    font-size: 1.5rem; /* text-2xl */
+    bottom: 2rem;
+    right: 2rem;
+    position: fixed;
+    z-index: 1000;
+    border-radius: 9999px; /* Fully rounded */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Shadow-xl */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: #3b82f6; /* Matching overall blue */
+}
+#ai-chat-bubble:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Enhanced shadow on hover */
+}
+/* Ensure prompt buttons stack nicely on smaller widths if needed */
+.flex-wrap > .flex-1 {
+    flex-basis: calc(50% - 0.25rem); /* Two buttons per row with gap */
+}
+
         /* Loading Animation */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -368,6 +608,13 @@
                 </div>
 
                 <div class="hidden md:block w-full md:w-1/4 lg:w-1/5">
+
+<div class="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Filters</h2>
+        <p class="text-sm text-gray-500" id="results-count-desktop">0 results found</p>
+    </div>
+    </div>
                     <div class="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="p-4 border-b border-gray-200">
                             <h2 class="text-lg font-medium text-gray-900">Filters</h2>
@@ -511,7 +758,7 @@
         </div>
     </section>
 
-    <!-- <section class="py-10 bg-gray-50">
+     <section class="py-10 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-xl font-bold text-gray-900 mb-6">Related Searches</h2>
 
@@ -565,7 +812,7 @@
                 </div>
             </div>
         </div>
-    </section> -->
+    </section> 
 
     <section class="py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -605,6 +852,52 @@
             </div>
         </div>
     </section>
+
+<div id="ai-assistant-widget" class="fixed bottom-8 right-8 w-[320px] h-[450px] shadow-2xl rounded-t-xl rounded-bl-xl overflow-hidden bg-white flex flex-col z-50">
+
+    <div id="ai-assistant-header" class="relative flex items-center justify-between p-4 bg-blue-700 text-white shadow-md cursor-grab" style="height: 90px; flex-shrink: 0;">
+        <div class="relative flex items-center z-10">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2900&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Chatbot Avatar" class="w-10 h-10 rounded-full border-2 border-white mr-3 object-cover">
+            <div>
+                <p class="text-xs text-blue-200">Chat with</p>
+                <h3 class="font-bold text-base">Movie Finder</h3>
+                 </div>
+        </div>
+        <div class="relative flex items-center space-x-2 z-10">
+            <button class="text-blue-200 hover:text-white">
+                <i class="fas fa-ellipsis-v"></i> </button>
+            <button id="ai-collapse-button" class="text-blue-200 hover:text-white">
+                <i class="fas fa-chevron-down"></i> </button>
+        </div>
+        <div class="header-bottom-curve"></div>
+    </div>
+
+    <div id="ai-chat-conversation" class="flex-grow p-4 bg-gray-100 overflow-y-auto custom-scrollbar">
+        <div class="ai-message-bubble bg-white p-3 rounded-lg shadow-sm mb-3">
+            <p class="text-gray-800 text-sm">Hi there! Nice to see you 👋 Let me help you get your movies</p>
+        </div>
+        <div id="quick-replies-container" class="flex justify-end gap-2 mb-3">
+            </div>
+       
+
+        </div>
+
+    <div id="ai-chat-input-area" class="p-3 bg-white border-t border-gray-200 flex items-center">
+       
+        <input
+            type="text"
+            id="ai-user-input"
+            class="flex-grow px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+            placeholder="Enter your message..."
+        >
+        <button id="ai-send-button" class="ml-3 w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <i class="fas fa-paper-plane"></i> </button>
+    </div>
+</div>
+
+<button id="ai-chat-bubble" class="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-blue-600 shadow-xl flex items-center justify-center text-white text-2xl hidden cursor-pointer hover:bg-blue-700 transition-colors">
+    <i class="fas fa-comment-dots"></i>
+</button>
 
     <footer class="bg-white border-t border-gray-200 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -682,658 +975,846 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js"></script>
+   <script>
+    // --- Global Constants and API Keys ---
+    const API_KEY = 'sk_43133c09_4813181f1f39ff42b605b2c9fb2ebb3fd6c1de4d10fd772f07254d5b8ebfb526';
+    const BASE_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/vector-search';
+    const AI_CHAT_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/chat';
 
-    <script>
-        const API_KEY = 'sk_43133c09_4813181f1f39ff42b605b2c9fb2ebb3fd6c1de4d10fd772f07254d5b8ebfb526';
-        const BASE_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/search'; // Updated collection name
-        const COLLECTION_NAME = 'movies-directory'; // Explicit collection name
+    // --- UI Elements for Main Search and Filters ---
+    const mainSearchInput = document.getElementById('main-search-input');
+    const moviesGrid = document.getElementById('movies-grid');
+    const resultsCountDesktop = document.getElementById('results-count-desktop');
+    const resultsCountMobile = document.getElementById('results-count-mobile');
+    const activeFilterPills = document.getElementById('active-filter-pills');
+    const clearAllFiltersBtn = document.getElementById('clear-all-filters');
+    const sortDropdown = document.getElementById('sort-dropdown');
+    const suggestedTagsContainer = document.getElementById('suggested-tags');
 
-        // UI Elements
-        const mainSearchInput = document.getElementById('main-search-input');
-        const moviesGrid = document.getElementById('movies-grid');
-        const resultsCountDesktop = document.getElementById('results-count-desktop');
-        const resultsCountMobile = document.getElementById('results-count-mobile');
-        const activeFilterPills = document.getElementById('active-filter-pills');
-        const clearAllFiltersBtn = document.getElementById('clear-all-filters');
-        const sortDropdown = document.getElementById('sort-dropdown');
-        const suggestedTagsContainer = document.getElementById('suggested-tags');
+    // Filter sections (desktop & mobile)
+    const genreFilterDesktop = document.getElementById('genre-filter-desktop');
+    const yearRangeDesktop = document.getElementById('year-range-desktop');
+    const yearFromDesktop = document.getElementById('year-from-desktop');
+    const yearToDesktop = document.getElementById('year-to-desktop');
+    const ratingFilterDesktop = document.getElementById('rating-filter-desktop');
+    const runtimeFilterDesktop = document.getElementById('runtime-filter-desktop');
+    const streamingFilterDesktop = document.getElementById('streaming-filter-desktop');
 
-        // Filter sections (desktop & mobile)
-        const genreFilterDesktop = document.getElementById('genre-filter-desktop');
-        const yearRangeDesktop = document.getElementById('year-range-desktop');
-        const yearFromDesktop = document.getElementById('year-from-desktop');
-        const yearToDesktop = document.getElementById('year-to-desktop');
-        const ratingFilterDesktop = document.getElementById('rating-filter-desktop');
-        const runtimeFilterDesktop = document.getElementById('runtime-filter-desktop');
-        const streamingFilterDesktop = document.getElementById('streaming-filter-desktop');
+    const genreFilterMobile = document.getElementById('genre-filter-mobile');
+    const yearRangeMobile = document.getElementById('year-range-mobile');
+    const yearFromMobile = document.getElementById('year-from-mobile');
+    const yearToMobile = document.getElementById('year-to-mobile');
+    const ratingFilterMobile = document.getElementById('rating-filter-mobile');
+    const runtimeFilterMobile = document.getElementById('runtime-filter-mobile');
+    const streamingFilterMobile = document.getElementById('streaming-filter-mobile');
 
-        const genreFilterMobile = document.getElementById('genre-filter-mobile');
-        const yearRangeMobile = document.getElementById('year-range-mobile');
-        const yearFromMobile = document.getElementById('year-from-mobile');
-        const yearToMobile = document.getElementById('year-to-mobile');
-        const ratingFilterMobile = document.getElementById('rating-filter-mobile');
-        const runtimeFilterMobile = document.getElementById('runtime-filter-mobile');
-        const streamingFilterMobile = document.getElementById('streaming-filter-mobile');
+    // Mobile drawer elements
+    const filterToggle = document.getElementById('filterToggle');
+    const mobileFilters = document.getElementById('mobileFilters');
+    const closeMobileFilters = document.getElementById('closeMobileFilters');
+    const applyFiltersMobileBtn = document.getElementById('apply-filters-mobile');
+    const resetFiltersMobileBtn = document.getElementById('reset-filters-mobile');
 
-        // Mobile drawer elements
-        const filterToggle = document.getElementById('filterToggle');
-        const mobileFilters = document.getElementById('mobileFilters');
-        const closeMobileFilters = document.getElementById('closeMobileFilters');
-        const applyFiltersMobileBtn = document.getElementById('apply-filters-mobile');
-        const resetFiltersMobileBtn = document.getElementById('reset-filters-mobile');
+    // --- UI Elements for AI Chatbot Widget ---
+    const aiAssistantWidget = document.getElementById('ai-assistant-widget'); // Main chatbot container
+    const aiAssistantHeader = document.getElementById('ai-assistant-header'); // Draggable header
+    const aiChatConversation = document.getElementById('ai-chat-conversation'); // Conversation display area
+    const aiUserInput = document.getElementById('ai-user-input'); // User input text field
+    const aiSendButton = document.getElementById('ai-send-button'); // Send message button
+    const conversationStatus = document.getElementById('conversation-status'); // Text like "We're online"
+    const aiCollapseButton = document.getElementById('ai-collapse-button'); // Button to collapse widget
+    const aiChatBubble = document.getElementById('ai-chat-bubble'); // Minimized chat icon
+    const aiChatInputArea = document.getElementById('ai-chat-input-area'); // Div containing input field and buttons
+
+    // New element for quick replies container
+    const quickRepliesContainer = document.getElementById('quick-replies-container');
+
+    // --- Global State Variables ---
+    let currentFilters = {
+        query: '*',
+        filter_by: {},
+    };
+    let currentSortBy = sortDropdown.value;
+    let allGenres = new Set(); // To store all unique genres for dynamic filter rendering
+
+    let currentConversationId = null; // Stores the conversation ID for AI chat
+    let isChatWidgetOpen = true; // State of the chatbot widget (open/collapsed)
 
 
-        // Global state for filters
-        let currentFilters = {
-            q: '*',
-            filter_by: {}, // e.g., { genre: ['Sci-Fi', 'Action'], release_year: '[1990..2000]', rating: '>=4.0', available_on_streaming: '=true' }
-        };
-        let currentSortBy = sortDropdown.value; // Initialize from default dropdown value
-        let allGenres = new Set(); // To store all unique genres for dynamic filter rendering
+    // --- Helper Functions ---
 
-        // --- Helper Functions ---
+    // Function to create star icons for rating display (reused for movie cards)
+    function createRatingStars(rating) {
+        let starsHtml = '';
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
 
-        // Function to create star icons for rating display
-        function createRatingStars(rating) {
-            let starsHtml = '';
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = rating % 1 !== 0;
-
-            for (let i = 0; i < 5; i++) {
-                if (i < fullStars) {
-                    starsHtml += '<i class="fas fa-star"></i>';
-                } else if (hasHalfStar && i === fullStars) {
-                    starsHtml += '<i class="fas fa-star-half-alt"></i>';
-                } else {
-                    starsHtml += '<i class="far fa-star"></i>';
-                }
-            }
-            return starsHtml;
-        }
-
-        // Function to create a movie card element
-        function createMovieCard(movie) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'movie-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200';
-            cardDiv.innerHTML = `
-                <div class="movie-poster relative overflow-hidden">
-                    <img src="${movie.poster || 'https://via.placeholder.com/500x750?text=No+Poster'}" alt="${movie.title} Poster" class="w-full h-64 object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
-                    <div class="absolute top-3 right-3">
-                        <button class="bg-white bg-opacity-20 backdrop-blur-sm p-2 rounded-full text-white hover:bg-opacity-30 transition-colors">
-                            <i class="far fa-bookmark"></i>
-                        </button>
-                    </div>
-                    ${movie.release_year === new Date().getFullYear() ? '<div class="absolute top-3 left-3"><span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-md">NEW</span></div>' : ''}
-                    <div class="absolute bottom-3 left-3 flex items-center">
-                        <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">${movie.rating ? movie.rating.toFixed(1) : 'N/A'}</span>
-                        <div class="ml-2 rating-stars flex items-center text-xs">
-                            ${createRatingStars(movie.rating || 0)}
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-bold mb-1 text-lg">${movie.title}</h3>
-                    <div class="flex items-center text-sm text-gray-600 mb-2">
-                        <span>${movie.release_year || 'N/A'}</span>
-                        <span class="mx-2">•</span>
-                        <span>${movie.runtime ? movie.runtime + ' min' : 'N/A'}</span>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        ${movie.genre ? movie.genre.map(g => `<span class="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-full">${g}</span>`).join('') : ''}
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-lg transition-colors">
-                            <i class="fas fa-play mr-1"></i> Watch
-                        </button>
-                        <div class="flex space-x-1">
-                            ${movie.available_on_streaming ? `
-                                <img src="https://via.placeholder.com/24x24/FF4500/FFFFFF?text=Stream" alt="Streaming Service" class="w-6 h-6 rounded">
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            return cardDiv;
-        }
-
-        // Render movie cards into the grid
-        function renderMovies(movies, totalFound) {
-            moviesGrid.innerHTML = ''; // Clear existing movies
-            if (movies && movies.length > 0) {
-                movies.forEach(hit => {
-                    const movie = hit.document;
-                    moviesGrid.appendChild(createMovieCard(movie));
-                });
+        for (let i = 0; i < 5; i++) {
+            if (i < fullStars) {
+                starsHtml += '<i class="fas fa-star"></i>';
+            } else if (hasHalfStar && i === fullStars) {
+                starsHtml += '<i class="fas fa-star-half-alt"></i>';
             } else {
-                moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No movies found matching your criteria.</p>';
+                starsHtml += '<i class="far fa-star"></i>';
             }
-            resultsCountDesktop.textContent = `${totalFound} movies found`;
-            resultsCountMobile.textContent = `${totalFound} movies found`;
         }
+        return starsHtml;
+    }
 
-        // Render active filter pills
-        function renderActiveFilterPills() {
-            activeFilterPills.innerHTML = '';
-            let hasActiveFilters = false;
+    // Function to create a movie card element (for displaying search results)
+    function createMovieCard(movie) {
+         const cardDiv = document.createElement('div');
+    cardDiv.className = 'movie-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200';
 
-            for (const field in currentFilters.filter_by) {
-                const values = currentFilters.filter_by[field];
-                if (Array.isArray(values)) { // For multi-select like genre, or specific values
-                    values.forEach(value => {
-                        hasActiveFilters = true;
-                        const pill = document.createElement('div');
-                        pill.className = 'filter-pill bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
-                        pill.innerHTML = `
-                            ${value}
-                            <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}" data-remove-filter-value="${value}">
-                                <i class="fas fa-times-circle"></i>
-                            </button>
-                        `;
-                        activeFilterPills.appendChild(pill);
-                    });
-                } else if (typeof values === 'string') { // For ranges or single values
+    // Add this console.log to inspect the genre data for each movie
+    console.log(`Movie: ${movie.title}, Genres:`, movie.genre);
+
+    cardDiv.onclick = () => {
+        console.log('Clicked movie ID:', movie.id);
+        window.open(`movie_details.html?id=${movie.id}`, '_blank'); // Open in new tab
+    };
+
+        cardDiv.innerHTML = `
+            <div class="movie-poster relative overflow-hidden">
+                <img src="${movie.poster || 'https://via.placeholder.com/500x750?text=No+Poster'}" alt="${movie.title} Poster" class="w-full h-64 object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
+                <div class="absolute top-3 right-3">
+                    <button class="bg-white bg-opacity-20 backdrop-blur-sm p-2 rounded-full text-white hover:bg-opacity-30 transition-colors">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </div>
+                ${movie.release_year === new Date().getFullYear() ? '<div class="absolute top-3 left-3"><span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-md">NEW</span></div>' : ''}
+                <div class="absolute bottom-3 left-3 flex items-center">
+                    <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">${movie.rating ? movie.rating.toFixed(1) : 'N/A'}</span>
+                    <div class="ml-2 rating-stars flex items-center text-xs">
+                        ${createRatingStars(movie.rating || 0)}
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <h3 class="text-gray-900 font-bold mb-1 text-lg">${movie.title}</h3>
+                <div class="flex items-center text-sm text-gray-600 mb-2">
+                    <span>${movie.release_year || 'N/A'}</span>
+                    <span class="mx-2">•</span>
+                    <span>${movie.runtime ? movie.runtime + ' min' : 'N/A'}</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    ${movie.genre ? movie.genre.map(g => `<span class="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-full">${g}</span>`).join('') : ''}
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-lg transition-colors">
+                        <i class="fas fa-play mr-1"></i> Watch
+                    </button>
+                    <div class="flex space-x-1">
+                        ${movie.available_on_streaming ? `
+                            <img src="https://via.placeholder.com/24x24/FF4500/FFFFFF?text=Stream" alt="Streaming Service" class="w-6 h-6 rounded">
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        return cardDiv;
+    }
+
+    // Function to render movie cards into the grid
+    function renderMovies(movies, totalFound) {
+        moviesGrid.innerHTML = ''; // Clear existing movies
+        if (movies && movies.length > 0) {
+            movies.forEach(hit => {
+                const movie = hit.document;
+                moviesGrid.appendChild(createMovieCard(movie));
+            });
+        } else {
+            moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No movies found matching your criteria.</p>';
+        }
+        resultsCountDesktop.textContent = `${totalFound} movies found`;
+        resultsCountMobile.textContent = `${totalFound} movies found`;
+    }
+
+    // Render active filter pills
+    function renderActiveFilterPills() {
+        activeFilterPills.innerHTML = '';
+        let hasActiveFilters = false;
+
+        for (const field in currentFilters.filter_by) {
+            const values = currentFilters.filter_by[field];
+            if (Array.isArray(values)) { // For multi-select like genre, or specific values
+                values.forEach(value => {
                     hasActiveFilters = true;
                     const pill = document.createElement('div');
                     pill.className = 'filter-pill bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
-                    let pillText = '';
-                    switch (field) {
-                        case 'release_year':
-                            const matchYearRange = values.match(/\[(\d+)\.\.(\d+)\]/);
-                            if (matchYearRange) {
-                                pillText = `Year: ${matchYearRange[1]}-${matchYearRange[2]}`;
-                            } else if (values.startsWith('>=')) {
-                                pillText = `Year: ${values.substring(2)}+`;
-                            } else if (values.startsWith('<=')) {
-                                pillText = `Year: ${values.substring(2)}-`;
-                            } else {
-                                pillText = `Year: ${values}`;
-                            }
-                            break;
-                        case 'rating':
-                            const matchRatingRange = values.match(/>=(\d+\.?\d*)/);
-                            if (matchRatingRange) {
-                                pillText = `Rating: ${parseFloat(matchRatingRange[1]).toFixed(1)}+`;
-                            } else {
-                                pillText = `Rating: ${values}`;
-                            }
-                            break;
-                        case 'runtime':
-                            if (values === '<90') pillText = 'Runtime: < 90 min';
-                            else if (values === '[90..120]') pillText = 'Runtime: 90-120 min';
-                            else if (values === '>120') pillText = 'Runtime: > 120 min';
-                            else pillText = `Runtime: ${values}`;
-                            break;
-                        case 'available_on_streaming':
-                            pillText = 'Available: Streaming';
-                            break;
-                        default:
-                            pillText = `${field}: ${values}`;
-                    }
-
                     pill.innerHTML = `
-                        ${pillText}
-                        <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}">
+                        ${value}
+                        <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}" data-remove-filter-value="${value}">
                             <i class="fas fa-times-circle"></i>
                         </button>
                     `;
                     activeFilterPills.appendChild(pill);
+                });
+            } else if (typeof values === 'string') { // For ranges or single values
+                hasActiveFilters = true;
+                const pill = document.createElement('div');
+                pill.className = 'filter-pill bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center';
+                let pillText = '';
+                switch (field) {
+                    case 'release_year':
+                        const matchYearRange = values.match(/\[(\d+)\.\.(\d+)\]/);
+                        if (matchYearRange) {
+                            pillText = `Year: ${matchYearRange[1]}-${matchYearRange[2]}`;
+                        } else if (values.startsWith('>=')) {
+                            pillText = `Year: ${values.substring(2)}+`;
+                        } else if (values.startsWith('<=')) {
+                            pillText = `Year: ${values.substring(2)}-`;
+                        } else {
+                            pillText = `Year: ${values}`;
+                        }
+                        break;
+                    case 'rating':
+                        const matchRatingRange = values.match(/>=(\d+\.?\d*)/);
+                        if (matchRatingRange) {
+                            pillText = `Rating: ${parseFloat(matchRatingRange[1]).toFixed(1)}+`;
+                        } else {
+                            pillText = `Rating: ${values}`;
+                        }
+                        break;
+                    case 'runtime':
+                        if (values === '<90') pillText = 'Runtime: < 90 min';
+                        else if (values === '[90..120]') pillText = 'Runtime: 90-120 min';
+                        else if (values === '>120') pillText = 'Runtime: > 120 min';
+                        else pillText = `Runtime: ${values}`;
+                        break;
+                    case 'available_on_streaming':
+                        pillText = 'Available: Streaming';
+                        break;
+                    default:
+                        pillText = `${field}: ${values}`;
                 }
-            }
 
-            // Show/hide "Clear all filters" button
-            clearAllFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+                pill.innerHTML = `
+                    ${pillText}
+                    <button class="ml-1 text-blue-600 hover:text-blue-800" data-remove-filter-field="${field}">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                `;
+                activeFilterPills.appendChild(pill);
+            }
         }
 
-        // Render facet filter options
-        function renderFacets(facetCounts, desktopOnly = false) {
-            // Convert facetCounts array to a Map for easier lookup by field_name and value
-            const facetMaps = {};
-            facetCounts.forEach(facet => {
-                facetMaps[facet.field_name] = new Map();
-                facet.counts.forEach(item => {
-                    facetMaps[facet.field_name].set(item.value, item.count);
-                });
+        // Show/hide "Clear all filters" button
+        clearAllFiltersBtn.style.display = hasActiveFilters ? 'inline-block' : 'none';
+    }
+
+    // Render facet filter options
+    function renderFacets(facetCounts, desktopOnly = false) {
+        const facetMaps = {};
+        facetCounts.forEach(facet => {
+            facetMaps[facet.field_name] = new Map();
+            facet.counts.forEach(item => {
+                facetMaps[facet.field_name].set(item.value, item.count);
             });
+        });
 
-            // Helper to render checkbox filter group
-            const renderCheckboxGroup = (container, fieldName, allValuesSet, currentActiveValues) => {
-                container.innerHTML = '';
-                Array.from(allValuesSet).sort().forEach(value => {
-                    const count = facetMaps[fieldName] ? facetMaps[fieldName].get(value) || 0 : 0;
-                    const div = document.createElement('label');
-                    div.className = 'custom-checkbox flex justify-between';
-                    div.innerHTML = `
-                        <div class="flex items-center">
-                            <input type="checkbox" data-facet-field="${fieldName}" value="${value}" ${currentActiveValues && currentActiveValues.includes(value) ? 'checked' : ''}>
-                            <span class="checkmark mr-3"></span>
-                            <span>${value}</span>
-                        </div>
-                        <span class="text-xs text-gray-500">${count}</span>
-                    `;
-                    container.appendChild(div);
-                });
-            };
-
-            // Render Genre Filter (Multi-select Checkboxes)
-            const activeGenres = currentFilters.filter_by.genre || [];
-            renderCheckboxGroup(genreFilterDesktop, 'genre', allGenres, activeGenres);
-            if (!desktopOnly) {
-                renderCheckboxGroup(genreFilterMobile, 'genre', allGenres, activeGenres);
-            }
-
-
-            // Render Rating Filter (Static options, counts from API)
-            const renderRatingFilter = (container, currentMinRating) => {
-                container.innerHTML = '';
-                const ratingBuckets = [5, 4, 3]; // Corresponds to >=5, >=4, >=3
-                ratingBuckets.forEach(minRating => {
-                    // This count needs to be derived if the API doesn't return bucketed counts
-                    // For now, we'll assume a dummy count or require explicit facet ranges from API
-                    // For simplicity, we'll just show the star rating as the label
-                    const count = '...'; // API doesn't return exact bucket counts for ranges here.
-                    const isChecked = currentMinRating === minRating;
-                    const div = document.createElement('label');
-                    div.className = 'custom-checkbox flex justify-between';
-                    div.innerHTML = `
-                        <div class="flex items-center">
-                            <input type="checkbox" data-facet-field="rating" value="${minRating}" ${isChecked ? 'checked' : ''}>
-                            <span class="checkmark mr-3"></span>
-                            <span class="flex items-center">
-                                ${createRatingStars(minRating)}
-                                <span class="ml-1">& up</span>
-                            </span>
-                        </div>
-                        <span class="text-xs text-gray-500">${count}</span>
-                    `;
-                    container.appendChild(div);
-                });
-            };
-            const currentMinRating = currentFilters.filter_by.rating ? parseFloat(currentFilters.filter_by.rating.replace('>=', '')) : null;
-            renderRatingFilter(ratingFilterDesktop, currentMinRating);
-            if (!desktopOnly) {
-                renderRatingFilter(ratingFilterMobile, currentMinRating);
-            }
-
-            // Render Runtime Filter (Static options, counts from API)
-            const renderRuntimeFilter = (container, currentActiveRuntime) => {
-                container.innerHTML = '';
-                const runtimeBuckets = [
-                    { label: 'Less than 90 min', value: '<90' },
-                    { label: '90-120 min', value: '[90..120]' },
-                    { label: 'Over 120 min', value: '>120' }
-                ];
-                runtimeBuckets.forEach(bucket => {
-                    const count = facetMaps.runtime ? facetMaps.runtime.get(bucket.value) || 0 : '...'; // API might not provide this as-is
-                    const isChecked = currentActiveRuntime && currentActiveRuntime.includes(bucket.value);
-                    const div = document.createElement('label');
-                    div.className = 'custom-checkbox flex justify-between';
-                    div.innerHTML = `
-                        <div class="flex items-center">
-                            <input type="checkbox" data-facet-field="runtime" value="${bucket.value}" ${isChecked ? 'checked' : ''}>
-                            <span class="checkmark mr-3"></span>
-                            <span>${bucket.label}</span>
-                        </div>
-                        <span class="text-xs text-gray-500">${count}</span>
-                    `;
-                    container.appendChild(div);
-                });
-            };
-            const activeRuntime = currentFilters.filter_by.runtime || [];
-            renderRuntimeFilter(runtimeFilterDesktop, activeRuntime);
-            if (!desktopOnly) {
-                renderRuntimeFilter(runtimeFilterMobile, activeRuntime);
-            }
-
-            // Render Available on Streaming (Boolean filter)
-            const renderStreamingFilter = (container, isAvailable) => {
-                container.innerHTML = '';
+        // Helper to render checkbox filter group
+        const renderCheckboxGroup = (container, fieldName, allValuesSet, currentActiveValues) => {
+            container.innerHTML = '';
+            Array.from(allValuesSet).sort().forEach(value => {
+                const count = facetMaps[fieldName] ? facetMaps[fieldName].get(value) || 0 : 0;
                 const div = document.createElement('label');
                 div.className = 'custom-checkbox flex justify-between';
                 div.innerHTML = `
                     <div class="flex items-center">
-                        <input type="checkbox" data-facet-field="available_on_streaming" value="true" ${isAvailable ? 'checked' : ''}>
+                        <input type="checkbox" data-facet-field="${fieldName}" value="${value}" ${currentActiveValues && currentActiveValues.includes(value) ? 'checked' : ''}>
                         <span class="checkmark mr-3"></span>
-                        <span class="flex items-center">
-                            <i class="fas fa-play-circle text-blue-600 mr-2"></i> Available on Streaming
-                        </span>
+                        <span>${value}</span>
                     </div>
-                    <span class="text-xs text-gray-500">...</span>
+                    <span class="text-xs text-gray-500">${count}</span>
                 `;
                 container.appendChild(div);
-            };
-            const isStreamingActive = currentFilters.filter_by.available_on_streaming === '=true';
-            renderStreamingFilter(streamingFilterDesktop, isStreamingActive);
-            if (!desktopOnly) {
-                renderStreamingFilter(streamingFilterMobile, isStreamingActive);
-            }
+            });
+        };
 
-            // Year Range Sliders & Inputs (need to sync initial values and changes)
-            const setupYearRange = (rangeInput, fromInput, toInput, minLabel, maxLabel) => {
-                const currentMin = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\[(\d+)\.\./)[1]) : 1920;
-                const currentMax = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\.\.(\d+)\]/)[1]) : 2025;
-
-                fromInput.value = currentMin;
-                toInput.value = currentMax;
-                minLabel.textContent = fromInput.value;
-                maxLabel.textContent = toInput.value;
-
-                // Sync range slider with text inputs (simplified for now)
-                rangeInput.value = currentMin; // Or midpoint, depending on how you want the single slider to represent range
-
-                fromInput.onchange = toInput.onchange = () => {
-                    const min = parseInt(fromInput.value);
-                    const max = parseInt(toInput.value);
-                    if (min <= max) {
-                        applyFilter('release_year', `[${min}..${max}]`);
-                    }
-                };
-                rangeInput.onchange = () => {
-                    // For a single range slider, you might set both from and to based on its value
-                    // Or ideally, use a dual-thumb slider library
-                    const year = parseInt(rangeInput.value);
-                    yearFromDesktop.value = year; // Example: set 'from' to slider value
-                    yearToDesktop.value = 2025; // Example: keep 'to' at max
-                    yearFromMobile.value = year;
-                    yearToMobile.value = 2025;
-                    applyFilter('release_year', `[${year}..2025]`);
-                };
-            };
-
-            const yearMinLabelDesktop = document.getElementById('year-min-label-desktop');
-            const yearMaxLabelDesktop = document.getElementById('year-max-label-desktop');
-            setupYearRange(yearRangeDesktop, yearFromDesktop, yearToDesktop, yearMinLabelDesktop, yearMaxLabelDesktop);
-
-            const yearMinLabelMobile = document.getElementById('year-min-label-mobile');
-            const yearMaxLabelMobile = document.getElementById('year-max-label-mobile');
-            setupYearRange(yearRangeMobile, yearFromMobile, yearToMobile, yearMinLabelMobile, yearMaxLabelMobile);
-
-
-            // Render Suggested Tags (from the `tags` field in collection, not facet_by)
-            // This is static in the HTML, would need a separate API call for dynamic tags if `tags` is a facet
-            // For now, it remains static as per your HTML
+        // Render Genre Filter (Multi-select Checkboxes)
+        const activeGenres = currentFilters.filter_by.genre || [];
+        renderCheckboxGroup(genreFilterDesktop, 'genre', allGenres, activeGenres);
+        if (!desktopOnly) {
+            renderCheckboxGroup(genreFilterMobile, 'genre', allGenres, activeGenres);
         }
 
+        // Render Rating Filter (Static options, counts from API)
+        const renderRatingFilter = (container, currentMinRating) => {
+            container.innerHTML = '';
+            const ratingBuckets = [5, 4, 3]; // Corresponds to >=5, >=4, >=3
+            ratingBuckets.forEach(minRating => {
+                const count = '...'; // API doesn't return exact bucket counts for ranges here.
+                const isChecked = currentMinRating === minRating;
+                const div = document.createElement('label');
+                div.className = 'custom-checkbox flex justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="checkbox" data-facet-field="rating" value="${minRating}" ${isChecked ? 'checked' : ''}>
+                        <span class="checkmark mr-3"></span>
+                        <span class="flex items-center">
+                            ${createRatingStars(minRating)}
+                            <span class="ml-1">& up</span>
+                        </span>
+                    </div>
+                    <span class="text-xs text-gray-500">${count}</span>
+                `;
+                container.appendChild(div);
+            });
+        };
+        const currentMinRating = currentFilters.filter_by.rating ? parseFloat(currentFilters.filter_by.rating.replace('>=', '')) : null;
+        renderRatingFilter(ratingFilterDesktop, currentMinRating);
+        if (!desktopOnly) {
+            renderRatingFilter(ratingFilterMobile, currentMinRating);
+        }
 
-        // --- Core Fetching Logic ---
+        // Render Runtime Filter (Static options, counts from API)
+        const renderRuntimeFilter = (container, currentActiveRuntime) => {
+            container.innerHTML = '';
+            const runtimeBuckets = [
+                { label: 'Less than 90 min', value: '<90' },
+                { label: '90-120 min', value: '[90..120]' },
+                { label: 'Over 120 min', value: '>120' }
+            ];
+            runtimeBuckets.forEach(bucket => {
+                const count = facetMaps.runtime ? facetMaps.runtime.get(bucket.value) || 0 : '...';
+                const isChecked = currentActiveRuntime && currentActiveRuntime.includes(bucket.value);
+                const div = document.createElement('label');
+                div.className = 'custom-checkbox flex justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="checkbox" data-facet-field="runtime" value="${bucket.value}" ${isChecked ? 'checked' : ''}>
+                        <span class="checkmark mr-3"></span>
+                        <span>${bucket.label}</span>
+                    </div>
+                    <span class="text-xs text-gray-500">${count}</span>
+                `;
+                container.appendChild(div);
+            });
+        };
+        const activeRuntime = currentFilters.filter_by.runtime || [];
+        renderRuntimeFilter(runtimeFilterDesktop, activeRuntime);
+        if (!desktopOnly) {
+            renderRuntimeFilter(runtimeFilterMobile, activeRuntime);
+        }
 
-        async function fetchMovies(query = currentFilters.q, filters = currentFilters.filter_by, sortBy = currentSortBy) {
-            moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 animate-pulse">Loading movies...</p>';
-            resultsCountDesktop.textContent = `Loading...`;
-            resultsCountMobile.textContent = `Loading...`;
+        // Render Available on Streaming (Boolean filter)
+        const renderStreamingFilter = (container, isAvailable) => {
+            container.innerHTML = '';
+            const div = document.createElement('label');
+            div.className = 'custom-checkbox flex justify-between';
+            div.innerHTML = `
+                <div class="flex items-center">
+                    <input type="checkbox" data-facet-field="available_on_streaming" value="true" ${isAvailable ? 'checked' : ''}>
+                    <span class="checkmark mr-3"></span>
+                    <span class="flex items-center">
+                        <i class="fas fa-play-circle text-blue-600 mr-2"></i> Available on Streaming
+                    </span>
+                </div>
+                <span class="text-xs text-gray-500">...</span>
+            `;
+            container.appendChild(div);
+        };
+        const isStreamingActive = currentFilters.filter_by.available_on_streaming === '=true';
+        renderStreamingFilter(streamingFilterDesktop, isStreamingActive);
+        if (!desktopOnly) {
+            renderStreamingFilter(streamingFilterMobile, isStreamingActive);
+        }
 
-            currentFilters.q = query;
-            currentFilters.filter_by = filters;
-            currentSortBy = sortBy;
+        // Year Range Sliders & Inputs (need to sync initial values and changes)
+        const setupYearRange = (rangeInput, fromInput, toInput, minLabel, maxLabel) => {
+            const currentMin = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\[(\d+)\.\./)[1]) : 1920;
+            const currentMax = currentFilters.filter_by.release_year ? parseInt(currentFilters.filter_by.release_year.match(/\.\.(\d+)\]/)[1]) : 2025;
 
-            const headers = {
-                'X-API-KEY': API_KEY,
-                'Content-Type': 'application/json'
+            fromInput.value = currentMin;
+            toInput.value = currentMax;
+            minLabel.textContent = fromInput.value;
+            maxLabel.textContent = toInput.value;
+
+            rangeInput.value = currentMin;
+
+            fromInput.onchange = toInput.onchange = () => {
+                const min = parseInt(fromInput.value);
+                const max = parseInt(toInput.value);
+                if (min <= max) {
+                    applyFilter('release_year', `[${min}..${max}]`);
+                }
+            };
+            rangeInput.onchange = () => {
+                const year = parseInt(rangeInput.value);
+                yearFromDesktop.value = year;
+                yearToDesktop.value = 2025;
+                yearFromMobile.value = year;
+                yearToMobile.value = 2025;
+                applyFilter('release_year', `[${year}..2025]`);
+            };
+        };
+
+        const yearMinLabelDesktop = document.getElementById('year-min-label-desktop');
+        const yearMaxLabelDesktop = document.getElementById('year-max-label-desktop');
+        setupYearRange(yearRangeDesktop, yearFromDesktop, yearToDesktop, yearMinLabelDesktop, yearMaxLabelDesktop);
+
+        const yearMinLabelMobile = document.getElementById('year-min-label-mobile');
+        const yearMaxLabelMobile = document.getElementById('year-max-label-mobile');
+        setupYearRange(yearRangeMobile, yearFromMobile, yearToMobile, yearMinLabelMobile, yearMaxLabelMobile);
+    }
+
+
+    // --- Core Fetching Logic ---
+
+    async function fetchMovies(query = currentFilters.query, filters = currentFilters.filter_by, sortBy = currentSortBy) {
+        moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 animate-pulse">Loading movies...</p>';
+        resultsCountDesktop.textContent = `Loading...`;
+        resultsCountMobile.textContent = `Loading...`;
+
+        currentFilters.query = query;
+        currentFilters.filter_by = filters;
+        currentSortBy = sortBy;
+
+        const headers = {
+            'X-API-KEY': API_KEY,
+            'Content-Type': 'application/json'
+        };
+
+        let apiUrl = BASE_URL;
+        let requestOptions = {};
+
+        const hasActiveFilters = Object.keys(filters).length > 0;
+        const hasSearchQuery = (query !== '*' && query !== '');
+
+        const allFacetFields = "release_year,genre,rating,runtime,available_on_streaming";
+
+        if (hasActiveFilters || hasSearchQuery) {
+            apiUrl = BASE_URL.split('?')[0];
+            const payload = {
+                query: hasSearchQuery ? query : '*',
+                query_by: "title,description,director,cast,genre,tags",
+                sort_by: sortBy,
+                facet_by: allFacetFields,
+                per_page: 10
             };
 
-            let apiUrl = BASE_URL;
-            let requestOptions = {};
-
-            const hasActiveFilters = Object.keys(filters).length > 0;
-            const hasSearchQuery = (query !== '*' && query !== '');
-
-            // All faceted fields from your collection schema
-            const allFacetFields = "release_year,genre,rating,runtime,available_on_streaming";
-
-            if (hasActiveFilters || hasSearchQuery) {
-                // Use POST for specific queries or filters
-                apiUrl = BASE_URL.split('?')[0];
-                const payload = {
-                    q: hasSearchQuery ? query : '*',
-                    query_by: "title,description,director,cast,genre,tags", // Search across multiple fields
-                    sort_by: sortBy,
-                    facet_by: allFacetFields, // Request facets for all declared facet fields
-                    per_page: 12 // Number of results per page
-                };
-
-                // Construct filter_by string
-                if (hasActiveFilters) {
-                    const filterParts = [];
-                    for (const field in filters) {
-                        const value = filters[field];
-                        if (Array.isArray(value)) { // For string[] types like genre
-                            filterParts.push(`${field}:=[${value.map(v => `'${v}'`).join(',')}]`);
-                        } else if (field === 'available_on_streaming') { // Boolean
-                            filterParts.push(`${field}:${value}`); // Expects '=true' or '=false' from logic
-                        }
-                        else { // For ranges (string type from number inputs/sliders)
-                            filterParts.push(`${field}:${value}`);
-                        }
+            if (hasActiveFilters) {
+                const filterParts = [];
+                for (const field in filters) {
+                    const value = filters[field];
+                    if (Array.isArray(value)) {
+                        filterParts.push(`${field}:=[${value.map(v => `'${v}'`).join(',')}]`);
+                    } else if (field === 'available_on_streaming') {
+                        filterParts.push(`${field}:${value}`);
+                    } else {
+                        filterParts.push(`${field}:${value}`);
                     }
-                    payload.filter_by = filterParts.join(' && ');
                 }
+                payload.filter_by = filterParts.join(' && ');
+            }
 
-                requestOptions = {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify(payload)
-                };
+            requestOptions = {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            };
+        } else {
+            apiUrl += `?query=${encodeURIComponent(query)}&facet_by=${allFacetFields}&sort_by=${encodeURIComponent(sortBy)}`;
+            requestOptions = {
+                method: 'GET',
+                headers: headers
+            };
+        }
+
+        try {
+            const response = await fetch(apiUrl, requestOptions);
+            const data = await response.json();
+
+            if (data.success) {
+                if (!hasActiveFilters && !hasSearchQuery) {
+                    data.data.facet_counts.forEach(facet => {
+                        if (facet.field_name === 'genre') {
+                            facet.counts.forEach(item => allGenres.add(item.value));
+                        }
+                    });
+                }
+                renderMovies(data.data.hits, data.data.found);
+                renderFacets(data.data.facet_counts);
+                renderActiveFilterPills();
             } else {
-                // Initial load: GET all movies, get all facets
-                apiUrl += `?q=${encodeURIComponent(query)}&facet_by=${allFacetFields}&sort_by=${encodeURIComponent(sortBy)}`;
-                requestOptions = {
-                    method: 'GET',
-                    headers: headers
-                };
+                moviesGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Error: ${data.message || 'Failed to fetch movies'}</p>`;
+                resultsCountDesktop.textContent = `Error loading results.`;
+                resultsCountMobile.textContent = `Error loading results.`;
+                console.error('API Error:', data);
             }
+        } catch (error) {
+            moviesGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Network Error: Could not connect to the API.</p>';
+            resultsCountDesktop.textContent = `Network error.`;
+            resultsCountMobile.textContent = `Network error.`;
+            console.error('Fetch error:', error);
+        }
+    }
 
-            try {
-                const response = await fetch(apiUrl, requestOptions);
-                const data = await response.json();
 
-                if (data.success) {
-                    // Populate all possible facet values on the very first unrestricted load
-                    if (!hasActiveFilters && !hasSearchQuery) {
-                        data.data.facet_counts.forEach(facet => {
-                            if (facet.field_name === 'genre') {
-                                facet.counts.forEach(item => allGenres.add(item.value));
-                            }
-                            // Add other "all possible values" if needed, e.g., director names
-                        });
-                    }
-                    renderMovies(data.data.hits, data.data.found);
-                    renderFacets(data.data.facet_counts);
-                    renderActiveFilterPills();
-                } else {
-                    moviesGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Error: ${data.message || 'Failed to fetch movies'}</p>`;
-                    resultsCountDesktop.textContent = `Error loading results.`;
-                    resultsCountMobile.textContent = `Error loading results.`;
-                    console.error('API Error:', data);
-                }
-            } catch (error) {
-                moviesGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Network Error: Could not connect to the API.</p>';
-                resultsCountDesktop.textContent = `Network error.`;
-                resultsCountMobile.textContent = `Network error.`;
-                console.error('Fetch error:', error);
+    // --- Filter Application Logic ---
+
+    function applyFilter(field, value) {
+        const newFilters = { ...currentFilters.filter_by };
+
+        if (field === 'genre' || field === 'runtime') {
+            if (!newFilters[field]) {
+                newFilters[field] = [];
             }
+            if (newFilters[field].includes(value)) {
+                newFilters[field] = newFilters[field].filter(v => v !== value);
+            } else {
+                newFilters[field].push(value);
+            }
+            if (newFilters[field].length === 0) {
+                delete newFilters[field];
+            }
+        } else if (field === 'rating') {
+            if (newFilters.rating === value) {
+                delete newFilters.rating;
+            } else {
+                newFilters.rating = value;
+            }
+        } else if (field === 'available_on_streaming') {
+            if (newFilters.available_on_streaming === value) {
+                delete newFilters.available_on_streaming;
+            } else {
+                newFilters.available_on_streaming = value;
+            }
+        } else if (field === 'release_year') {
+            newFilters.release_year = value;
         }
 
+        fetchMovies(currentFilters.query, newFilters, currentSortBy);
+    }
 
-        // --- Filter Application Logic ---
+    function removeFilter(field, valueToRemove = null) {
+        const newFilters = { ...currentFilters.filter_by };
 
-        // Unified function to apply a filter and trigger search
-        function applyFilter(field, value) {
-            const newFilters = { ...currentFilters.filter_by };
-
-            if (field === 'genre' || field === 'runtime') { // Multi-select checkboxes
-                if (!newFilters[field]) {
-                    newFilters[field] = [];
-                }
-                if (newFilters[field].includes(value)) {
-                    newFilters[field] = newFilters[field].filter(v => v !== value);
-                } else {
-                    newFilters[field].push(value);
-                }
+        if (Array.isArray(newFilters[field])) {
+            if (valueToRemove) {
+                newFilters[field] = newFilters[field].filter(v => v !== valueToRemove);
                 if (newFilters[field].length === 0) {
                     delete newFilters[field];
                 }
-            } else if (field === 'rating') { // Special handling for rating tiers
-                // Only one rating tier can be selected at a time
-                if (newFilters.rating === value) {
-                    delete newFilters.rating; // Deselect if already active
+            }
+        } else {
+            delete newFilters[field];
+        }
+        fetchMovies(currentFilters.query, newFilters, currentSortBy);
+    }
+
+    // --- Event Listeners for Main Search and Filters ---
+
+    let searchTimeout;
+    mainSearchInput.addEventListener('keyup', (event) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const query = event.target.value.trim();
+            fetchMovies(query === '' ? '*' : query);
+        }, 500);
+    });
+
+    document.querySelectorAll('[data-search-term]').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const searchTerm = event.target.dataset.searchTerm;
+            mainSearchInput.value = searchTerm;
+            fetchMovies(searchTerm);
+        });
+    });
+
+    sortDropdown.addEventListener('change', (event) => {
+        fetchMovies(currentFilters.query, currentFilters.filter_by, event.target.value);
+    });
+
+    clearAllFiltersBtn.addEventListener('click', () => {
+        currentFilters.filter_by = {};
+        const currentYear = new Date().getFullYear();
+        yearFromDesktop.value = 1920;
+        yearToDesktop.value = currentYear;
+        yearRangeDesktop.value = 1920;
+        yearFromMobile.value = 1920;
+        yearToMobile.value = currentYear;
+        yearRangeMobile.value = 1920;
+        fetchMovies(currentFilters.query, {});
+    });
+
+    document.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.type === 'checkbox' && target.dataset.facetField) {
+            const field = target.dataset.facetField;
+            const value = target.value;
+
+            if (field === 'rating') {
+                const currentRating = currentFilters.filter_by.rating;
+                const newRatingValue = target.checked ? `>=${parseFloat(value).toFixed(1)}` : null;
+
+                if (currentRating === newRatingValue) {
+                    delete currentFilters.filter_by.rating;
                 } else {
-                    newFilters.rating = value;
+                    currentFilters.filter_by.rating = newRatingValue;
                 }
-            } else if (field === 'available_on_streaming') { // Boolean checkbox
-                 if (newFilters.available_on_streaming === value) {
-                    delete newFilters.available_on_streaming;
-                 } else {
-                    newFilters.available_on_streaming = value;
-                 }
+                renderFacets(currentFilters.facet_counts || []);
+                fetchMovies(currentFilters.query, currentFilters.filter_by, currentSortBy);
+            } else if (field === 'available_on_streaming') {
+                applyFilter(field, target.checked ? '=true' : '=false');
+            } else {
+                applyFilter(field, value);
             }
-            else if (field === 'release_year') { // Year range
-                newFilters.release_year = value; // Value will be like '[1990..2000]'
-            }
-            // Add other filter types as needed
+        }
+    });
 
-            fetchMovies(currentFilters.q, newFilters, currentSortBy);
+    activeFilterPills.addEventListener('click', (event) => {
+        const target = event.target.closest('button[data-remove-filter-field]');
+        if (target) {
+            const field = target.dataset.removeFilterField;
+            const value = target.dataset.removeFilterValue;
+            removeFilter(field, value);
+        }
+    });
+
+    // --- Mobile Filter Drawer Logic ---
+    filterToggle.addEventListener('click', () => {
+        mobileFilters.style.display = 'block';
+        setTimeout(() => {
+            mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-closed');
+            mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-open');
+        }, 10);
+    });
+
+    closeMobileFilters.addEventListener('click', () => {
+        mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-open');
+        mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-closed');
+        setTimeout(() => {
+            mobileFilters.style.display = 'none';
+        }, 300);
+    });
+
+    applyFiltersMobileBtn.addEventListener('click', () => {
+        fetchMovies(currentFilters.query, currentFilters.filter_by, currentSortBy);
+        closeMobileFilters.click();
+    });
+
+    resetFiltersMobileBtn.addEventListener('click', () => {
+        currentFilters.filter_by = {};
+        mainSearchInput.value = '';
+        fetchMovies('*', {});
+        closeMobileFilters.click();
+    });
+
+    // --- AI Chatbot Widget Logic ---
+
+    // Helper to append a message to the conversation
+    function appendMessage(sender, message, quickReplies = []) {
+        const messageDiv = document.createElement('div');
+        // Base classes for message bubbles
+        messageDiv.className = `max-w-[85%] p-3 rounded-lg shadow-sm mb-3`;
+
+        if (sender === 'user') {
+            messageDiv.classList.add('user-message-bubble', 'ml-auto'); // User messages align right, apply user bubble style
+            messageDiv.innerHTML = `<p class="text-gray-800 text-sm">${message}</p>`; // Text is direct
+        } else { // sender === 'ai'
+            messageDiv.classList.add('ai-message-bubble', 'mr-auto'); // AI messages align left, apply AI bubble style
+            // Use marked.parse() to convert Markdown to HTML for AI messages
+            messageDiv.innerHTML = marked.parse(message); // THIS IS THE MARKED.JS INTEGRATION
+        }
+        aiChatConversation.appendChild(messageDiv);
+
+        // Add quick replies if provided by AI and it's an AI message
+        if (quickReplies.length > 0 && sender === 'ai') {
+            renderQuickReplies(quickReplies);
+        } else {
+            // Clear quick replies if the new message doesn't have them
+            clearQuickReplies();
         }
 
-        // Function to remove a filter
-        function removeFilter(field, valueToRemove = null) {
-            const newFilters = { ...currentFilters.filter_by };
+        aiChatConversation.scrollTop = aiChatConversation.scrollHeight; // Auto-scroll to bottom
+    }
 
-            if (field === 'genre' || field === 'runtime') {
-                if (newFilters[field] && Array.isArray(newFilters[field]) && valueToRemove) {
-                    newFilters[field] = newFilters[field].filter(v => v !== valueToRemove);
-                    if (newFilters[field].length === 0) {
-                        delete newFilters[field];
-                    }
-                }
-            } else { // For single-value filters like year, rating, streaming status
-                delete newFilters[field];
-            }
-            fetchMovies(currentFilters.q, newFilters, currentSortBy);
-        }
+    // Helper: Render Quick Reply Buttons
+    function renderQuickReplies(replies) {
+        clearQuickReplies(); // Clear any previous replies
+        quickRepliesContainer.classList.remove('hidden'); // Ensure container is visible
 
-        // --- Event Listeners ---
-
-        // Main Search Input
-        let searchTimeout;
-        mainSearchInput.addEventListener('keyup', (event) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const query = event.target.value.trim();
-                fetchMovies(query === '' ? '*' : query);
-            }, 500); // Debounce search
-        });
-
-        // Popular Search buttons
-        document.querySelectorAll('[data-search-term]').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const searchTerm = event.target.dataset.searchTerm;
-                mainSearchInput.value = searchTerm;
-                fetchMovies(searchTerm);
+        replies.forEach(replyText => {
+            const button = document.createElement('button');
+            // Tailwind classes for quick reply buttons as per image design
+            button.className = 'quick-reply-button px-4 py-2 text-sm rounded-full bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200 transition-colors focus:outline-none';
+            button.textContent = replyText;
+            button.addEventListener('click', () => {
+                sendAiMessage(replyText); // Send the reply text as a new message
+                // Quick replies are cleared by sendAiMessage after sending, so no need to clear here.
             });
+            quickRepliesContainer.appendChild(button);
         });
+        aiChatConversation.scrollTop = aiChatConversation.scrollHeight; // Scroll to new buttons
+    }
 
-        // Sort Dropdown
-        sortDropdown.addEventListener('change', (event) => {
-            fetchMovies(currentFilters.q, currentFilters.filter_by, event.target.value);
-        });
+    // Helper: Clear Quick Reply Buttons
+    function clearQuickReplies() {
+        quickRepliesContainer.innerHTML = '';
+        quickRepliesContainer.classList.add('hidden'); // Hide container if empty
+    }
 
-        // Clear all filters button
-        clearAllFiltersBtn.addEventListener('click', () => {
-            currentFilters.filter_by = {};
-            // Reset year range inputs and sliders visually
-            const currentYear = new Date().getFullYear();
-            yearFromDesktop.value = 1920;
-            yearToDesktop.value = currentYear;
-            yearRangeDesktop.value = 1920; // Or reset to a sensible default
-            yearFromMobile.value = 1920;
-            yearToMobile.value = currentYear;
-            yearRangeMobile.value = 1920;
+    // Send AI Message Function
+    async function sendAiMessage(messageFromButton = null) {
+        const message = messageFromButton || aiUserInput.value.trim();
+        if (!message) return;
 
+        appendMessage('user', message);
+        aiUserInput.value = '';
+        clearQuickReplies();
 
-            fetchMovies(currentFilters.q, {});
-        });
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'ai-message-bubble max-w-[85%] bg-white p-3 rounded-lg shadow-sm mb-3 ai-message-bubble animate-pulse';
+        typingIndicator.innerHTML = '<p class="text-gray-500">AI is typing...</p>';
+        aiChatConversation.appendChild(typingIndicator);
+        aiChatConversation.scrollTop = aiChatConversation.scrollHeight;
 
-        // Event delegation for all sidebar filters (desktop & mobile)
-        document.addEventListener('change', (event) => {
-            const target = event.target;
-            if (target.type === 'checkbox' && target.dataset.facetField) {
-                const field = target.dataset.facetField;
-                const value = target.value;
+        aiSendButton.disabled = true;
+        aiUserInput.disabled = true;
 
-                // Special handling for rating checkboxes (treat as radio-like)
-                if (field === 'rating') {
-                    const currentRating = currentFilters.filter_by.rating;
-                    const newRatingValue = target.checked ? `>=${parseFloat(value).toFixed(1)}` : null;
+        const headers = {
+            'X-API-KEY': API_KEY,
+            'Content-Type': 'application/json'
+        };
 
-                    // If a rating is already selected, and user clicks it again (to deselect)
-                    // or clicks a different rating, clear existing rating filter
-                    if (currentRating === newRatingValue) {
-                         delete currentFilters.filter_by.rating;
-                    } else {
-                         currentFilters.filter_by.rating = newRatingValue;
+        const payload = {
+            message: message
+        };
+
+        if (currentConversationId) {
+            payload.conversation_id = currentConversationId;
+        }
+
+        try {
+            const response = await fetch(AI_CHAT_URL, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (aiChatConversation.contains(typingIndicator)) {
+                aiChatConversation.removeChild(typingIndicator);
+            }
+
+            if (data.success) {
+                currentConversationId = data.data.conversation_id;
+                const aiAnswer = data.data.answer;
+                const aiQuickReplies = data.data.quick_replies || [];
+
+                appendMessage('ai', aiAnswer, aiQuickReplies);
+
+                const aiResponseResults = data.data.results;
+                if (aiResponseResults && aiResponseResults.length > 0 && aiResponseResults[0].hits) {
+                    const hits = aiResponseResults[0].hits;
+                    const totalFound = aiResponseResults[0].found;
+                    renderMovies(hits, totalFound);
+                    
+                    if (data.data.message) {
+                        mainSearchInput.value = data.data.message;
                     }
-                    // Re-render all rating checkboxes to ensure only one is checked
-                    renderFacets(currentFilters.facet_counts || []); // Use last received facet counts
-                    fetchMovies(currentFilters.q, currentFilters.filter_by, currentSortBy);
-                } else if (field === 'available_on_streaming') {
-                    applyFilter(field, target.checked ? '=true' : '=false'); // Boolean facet needs =true/=false
+                } else {
+                    moviesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">AI found no specific movie results for this query.</p>';
+                    resultsCountDesktop.textContent = `0 movies found`;
+                    resultsCountMobile.textContent = `0 movies found`;
                 }
-                else { // For genre and runtime (multi-select)
-                    applyFilter(field, value);
-                }
+
+            } else {
+                appendMessage('ai', `<p class="text-red-500">Error: ${data.message || 'Failed to get AI response.'}</p>`);
+                console.error('AI Chat Error:', data);
             }
-        });
-
-        // Event listener for removing filter pills
-        activeFilterPills.addEventListener('click', (event) => {
-            const target = event.target.closest('button[data-remove-filter-field]');
-            if (target) {
-                const field = target.dataset.removeFilterField;
-                const value = target.dataset.removeFilterValue; // Will be null for single-value filters
-                removeFilter(field, value);
+        } catch (error) {
+            if (aiChatConversation.contains(typingIndicator)) {
+                aiChatConversation.removeChild(typingIndicator);
             }
-        });
+            appendMessage('ai', '<p class="text-red-500">Network Error: Could not connect to AI.</p>');
+            console.error('AI Chat Fetch Error:', error);
+        } finally {
+            aiSendButton.disabled = false;
+            aiUserInput.disabled = false;
+            aiUserInput.focus();
+        }
+    }
 
+    // --- Widget Collapse/Expand Logic ---
+    function toggleChatWidget() {
+        if (isChatWidgetOpen) {
+            aiAssistantWidget.classList.add('collapsed');
+            aiChatBubble.classList.remove('hidden');
+            aiCollapseButton.querySelector('i').className = 'fas fa-chevron-up';
+            isChatWidgetOpen = false;
+        } else {
+            aiAssistantWidget.classList.remove('collapsed');
+            aiChatBubble.classList.add('hidden');
+            aiCollapseButton.querySelector('i').className = 'fas fa-chevron-down';
+            isChatWidgetOpen = true;
+            aiChatConversation.scrollTop = aiChatConversation.scrollHeight;
+            aiUserInput.focus();
+        }
+    }
 
-        // --- Mobile Filter Drawer Logic ---
+    // --- Draggable Widget Logic ---
+    let isDragging = false;
+    let offsetX, offsetY;
 
-        // Toggle visibility and animation classes
-        filterToggle.addEventListener('click', () => {
-            mobileFilters.style.display = 'block';
-            setTimeout(() => {
-                mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-closed');
-                mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-open');
-            }, 10);
-        });
+    aiAssistantHeader.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button')) return; // Prevent dragging if a button is clicked
 
-        closeMobileFilters.addEventListener('click', () => {
-            mobileFilters.querySelector('.mobile-drawer').classList.remove('drawer-open');
-            mobileFilters.querySelector('.mobile-drawer').classList.add('drawer-closed');
-            setTimeout(() => {
-                mobileFilters.style.display = 'none';
-            }, 300); // Match CSS transition duration
-        });
+        if (!isChatWidgetOpen) return; // Only allow dragging if the widget is open
 
-        // Mobile Apply/Reset Buttons (Apply current filters on mobile drawer close)
-        applyFiltersMobileBtn.addEventListener('click', () => {
-             // For simplicity, directly re-fetch with current global filters state
-             // In a more complex app, mobile filters might have local state that syncs on apply
-             fetchMovies(currentFilters.q, currentFilters.filter_by, currentSortBy);
-             closeMobileFilters.click(); // Close drawer after applying
-        });
+        isDragging = true;
+        offsetX = e.clientX - aiAssistantWidget.getBoundingClientRect().left;
+        offsetY = e.clientY - aiAssistantWidget.getBoundingClientRect().top;
+        // No direct cursor style manipulation here for cleaner look, controlled by CSS `cursor: grab` on header
+    });
 
-        resetFiltersMobileBtn.addEventListener('click', () => {
-            currentFilters.filter_by = {}; // Reset all filters
-            mainSearchInput.value = ''; // Clear search
-            fetchMovies('*', {}); // Re-fetch all
-            closeMobileFilters.click(); // Close drawer
-        });
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging || !isChatWidgetOpen) return; // Only drag if open
 
+        let newX = e.clientX - offsetX;
+        let newY = e.clientY - offsetY;
 
-        // Initial Load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchMovies();
-        });
-    </script>
+        const maxX = window.innerWidth - aiAssistantWidget.offsetWidth;
+        const maxY = window.innerHeight - aiAssistantWidget.offsetHeight;
+
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        aiAssistantWidget.style.left = newX + 'px';
+        aiAssistantWidget.style.top = newY + 'px';
+        aiAssistantWidget.style.right = 'auto'; // Clear right/bottom constraints
+        aiAssistantWidget.style.bottom = 'auto';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        // No direct cursor style manipulation here
+    });
+
+    // --- Event Listeners for Chatbot and Main Page ---
+    aiSendButton.addEventListener('click', () => sendAiMessage());
+    aiUserInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendAiMessage();
+        }
+    });
+
+    aiCollapseButton.addEventListener('click', toggleChatWidget);
+    aiChatBubble.addEventListener('click', toggleChatWidget);
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchMovies(); // Initial movie load
+        // Ensure chatbot starts open and bubble is hidden
+        aiAssistantWidget.classList.remove('collapsed');
+        aiChatBubble.classList.add('hidden');
+    });
+</script>
 </body>
 </html>

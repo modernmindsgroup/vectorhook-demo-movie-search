@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="movie-detail-title">Movie Details - MovieFinder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .rating-stars {
+            color: #f59e0b;
+        }
+        .movie-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .movie-poster img {
+            transition: all 0.5s ease;
+        }
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <span class="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-2">
+                            <i class="fas fa-film text-white"></i>
+                        </span>
+                        <span class="text-xl font-bold text-gray-900">MovieFinder</span>
+                    </a>
+                </div>
+
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-500 hover:text-gray-900 font-medium">Home</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 font-medium">Discover</a>
+                    <a href="index.html" class="text-blue-600 font-medium">Search</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 font-medium">Watchlist</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-900 p-1">
+                        <i class="far fa-bell"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-900 p-1">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                    <button class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                        <i class="far fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div id="movie-details-section" class="bg-white shadow-lg rounded-lg overflow-hidden md:flex">
+            <div class="md:w-1/3">
+                <img id="movie-poster" src="https://via.placeholder.com/500x750?text=Loading..." alt="Movie Poster" class="w-full h-full object-cover">
+            </div>
+            <div class="md:w-2/3 p-6">
+                <h1 id="movie-title" class="text-3xl font-bold text-gray-900 mb-3">Loading Movie...</h1>
+                <p id="movie-year-runtime" class="text-gray-600 text-lg mb-2"></p>
+                <div id="movie-genres" class="flex flex-wrap gap-2 mb-4"></div>
+                <div class="flex items-center text-xl text-gray-800 mb-4">
+                    <span id="movie-rating-value" class="font-bold mr-2"></span>
+                    <div id="movie-rating-stars" class="rating-stars flex items-center text-xl"></div>
+                </div>
+                <p id="movie-description" class="text-gray-700 leading-relaxed mb-6"></p>
+                <div class="mb-6">
+                    <p class="font-semibold text-gray-800">Director: <span id="movie-director" class="font-normal text-gray-700"></span></p>
+                    <p class="font-semibold text-gray-800">Cast: <span id="movie-cast" class="font-normal text-gray-700"></span></p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-play mr-2"></i> Watch Now
+                    </button>
+                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-bookmark mr-2"></i> Add to Watchlist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">More Like This</h2>
+            <div id="recommendations-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <p class="col-span-full text-center text-gray-500">Loading recommendations...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-2">
+                            <i class="fas fa-film text-white"></i>
+                        </span>
+                        <span class="text-xl font-bold text-gray-900">MovieFinder</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Discover your next favorite movie with our comprehensive search and filtering tools.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Browse</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Movies</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">TV Shows</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Genres</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">New Releases</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Top Rated</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Account</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">My Account</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Watchlist</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Watch History</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Settings</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">DMCA</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">&copy; 2025 MovieFinder. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 flex items-center">
+                    <span class="text-gray-500 text-sm mr-4">Available on:</span>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-apple text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-android text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-windows text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script>
+    const API_KEY = 'sk_43133c09_4813181f1f39ff42b605b2c9fb2ebb3fd6c1de4d10fd772f07254d5b8ebfb526';
+    const BASE_SEARCH_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/vector-search';
+    const SIMILAR_MOVIES_URL = 'https://vectorhookcom-production.up.railway.app/api/collections/movies-ent/similar';
+
+    // UI Elements for movie details
+    const movieDetailTitle = document.getElementById('movie-detail-title');
+    const moviePoster = document.getElementById('movie-poster');
+    const movieTitle = document.getElementById('movie-title');
+    const movieYearRuntime = document.getElementById('movie-year-runtime');
+    const movieGenres = document.getElementById('movie-genres');
+    const movieRatingValue = document.getElementById('movie-rating-value');
+    const movieRatingStars = document.getElementById('movie-rating-stars');
+    const movieDescription = document.getElementById('movie-description');
+    const movieDirector = document.getElementById('movie-director');
+    const movieCast = document.getElementById('movie-cast');
+    const recommendationsGrid = document.getElementById('recommendations-grid');
+
+    // Function to create star icons for rating display
+    function createRatingStars(rating) {
+        let starsHtml = '';
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+
+        for (let i = 0; i < 5; i++) {
+            if (i < fullStars) {
+                starsHtml += '<i class="fas fa-star"></i>';
+            } else if (hasHalfStar && i === fullStars) {
+                starsHtml += '<i class="fas fa-star-half-alt"></i>';
+            } else {
+                starsHtml += '<i class="far fa-star"></i>';
+            }
+        }
+        return starsHtml;
+    }
+
+    // Function to create a movie card element (for recommendations)
+    function createMovieCard(movie) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'movie-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200';
+        cardDiv.innerHTML = `
+            <a href="movie_details.html?id=${movie.id}" class="block">
+            <div class="movie-poster relative overflow-hidden">
+                <img src="${movie.poster || 'https://via.placeholder.com/500x750?text=No+Poster'}" alt="${movie.title} Poster" class="w-full h-64 object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
+                <div class="absolute top-3 right-3">
+                    <button class="bg-white bg-opacity-20 backdrop-blur-sm p-2 rounded-full text-white hover:bg-opacity-30 transition-colors">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </div>
+                ${movie.release_year === new Date().getFullYear() ? '<div class="absolute top-3 left-3"><span class="bg-blue-600 text-white text-xs px-2 py-1 rounded-md">NEW</span></div>' : ''}
+                <div class="absolute bottom-3 left-3 flex items-center">
+                    <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">${movie.rating ? movie.rating.toFixed(1) : 'N/A'}</span>
+                    <div class="ml-2 rating-stars flex items-center text-xs">
+                        ${createRatingStars(movie.rating || 0)}
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <h3 class="text-gray-900 font-bold mb-1 text-lg">${movie.title}</h3>
+                <div class="flex items-center text-sm text-gray-600 mb-2">
+                    <span>${movie.release_year || 'N/A'}</span>
+                    <span class="mx-2">•</span>
+                    <span>${movie.runtime ? movie.runtime + ' min' : 'N/A'}</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    ${movie.genre ? movie.genre.map(g => `<span class="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-full">${g}</span>`).join('') : ''}
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded-lg transition-colors">
+                        <i class="fas fa-play mr-1"></i> Watch
+                    </button>
+                    <div class="flex space-x-1">
+                        ${movie.available_on_streaming ? `
+                            <img src="https://via.placeholder.com/24x24/FF4500/FFFFFF?text=Stream" alt="Streaming Service" class="w-6 h-6 rounded">
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+            </a>
+        `;
+        // Add click event for the card div itself to handle new tab for recommended movies
+        cardDiv.addEventListener('click', (event) => {
+            // Prevent default link navigation for the <a> tag inside, as we're handling with JS
+            event.preventDefault();
+            // Get the ID from the <a> tag's href or directly from the movie object
+            const clickedMovieId = movie.id; 
+            if (clickedMovieId) {
+                // Navigate to the same details page, effectively reloading it with new movie data
+                // This is desired behavior for clicking related items on a details page
+                window.location.href = `movie_details.html?id=${clickedMovieId}`;
+            }
+        });
+        return cardDiv;
+    }
+
+    // Function to display movie details
+    function displayMovieDetails(movie) {
+        movieDetailTitle.textContent = `${movie.title} - MovieFinder`;
+        moviePoster.src = movie.poster || 'https://via.placeholder.com/500x750?text=No+Poster';
+        moviePoster.alt = `${movie.title} Poster`;
+        movieTitle.textContent = movie.title;
+        movieYearRuntime.textContent = `${movie.release_year || 'N/A'} • ${movie.runtime ? movie.runtime + ' min' : 'N/A'}`;
+
+        movieGenres.innerHTML = movie.genre ? movie.genre.map(g => `<span class="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-full">${g}</span>`).join('') : 'N/A';
+        
+        movieRatingValue.textContent = movie.rating ? movie.rating.toFixed(1) : 'N/A';
+        movieRatingStars.innerHTML = createRatingStars(movie.rating || 0);
+
+        movieDescription.textContent = movie.description || 'No description available.';
+        movieDirector.textContent = movie.director || 'N/A';
+        movieCast.textContent = movie.cast && movie.cast.length > 0 ? movie.cast.join(', ') : 'N/A';
+    }
+
+    // Fetch movie details by ID using filter_by for exact match
+    async function fetchMovieDetails(movieId) {
+        try {
+            const response = await fetch(`${BASE_SEARCH_URL}`, {
+                method: 'POST',
+                headers: {
+                    'X-API-KEY': API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: "*", // Query all, as we're filtering by ID
+                    filter_by: `id:=${movieId}`, // <--- THIS IS THE KEY CHANGE
+                    per_page: 1
+                })
+            });
+            const data = await response.json();
+            if (data.success && data.data.hits.length > 0) {
+                return data.data.hits[0].document;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error fetching movie details:', error);
+            return null;
+        }
+    }
+
+    // Fetch recommendations for a movie
+    async function fetchRecommendations(movieId, genreFilter = null) {
+        recommendationsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">Loading recommendations...</p>';
+        const payload = {
+            id: movieId,
+            k: 5, // Number of nearest neighbors to search
+            per_page: 4, // Number of results to return
+            distance_threshold: 0.5 // Adjust as needed for similarity
+        };
+
+        // You had a genreFilter parameter that wasn't used in the payload.
+        // If you want to filter recommendations by genre, you would add it like this:
+        // if (genreFilter) {
+        //     payload.filter_by = `genre:='${genreFilter}'`;
+        // }
+
+        try {
+            const response = await fetch(SIMILAR_MOVIES_URL, {
+                method: 'POST',
+                headers: {
+                    'X-API-KEY': API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (data.success && data.data.hits.length > 0) {
+                recommendationsGrid.innerHTML = ''; // Clear loading text
+                data.data.hits.forEach(hit => {
+                    // console.log("Recommended movie ID:", hit.document.id); // Add this log to verify IDs
+                    recommendationsGrid.appendChild(createMovieCard(hit.document)); // Pass document directly
+                });
+            } else {
+                recommendationsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No recommendations found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching recommendations:', error);
+            recommendationsGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading recommendations.</p>';
+        }
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+        console.log('Movie ID retrieved from URL:', movieId);
+
+        if (movieId) {
+            const movie = await fetchMovieDetails(movieId);
+            if (movie) {
+                displayMovieDetails(movie);
+                // Fetch recommendations, using the actual movie ID
+                fetchRecommendations(movieId, movie.genre && movie.genre.length > 0 ? movie.genre[0] : null);
+            } else {
+                movieTitle.textContent = 'Movie Not Found';
+                movieDescription.textContent = 'The requested movie could not be loaded.';
+                moviePoster.src = 'https://via.placeholder.com/500x750?text=Movie+Not+Found';
+                recommendationsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No recommendations available.</p>';
+            }
+        } else {
+            movieTitle.textContent = 'No Movie ID Provided';
+            movieDescription.textContent = 'Please select a movie from the main page to view its details.';
+            moviePoster.src = 'https://via.placeholder.com/500x750?text=Select+a+Movie';
+            recommendationsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No recommendations available.</p>';
+        }
+    });
+</script>
+</body>
+</html>
